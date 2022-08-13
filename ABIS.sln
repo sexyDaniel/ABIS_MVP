@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABIS.WebApi", "ABIS.WebApi\ABIS.WebApi.csproj", "{D62786B9-F3F1-4C12-9EA1-527E8B37EB6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABIS.Persistence", "ABIS.Persistence\ABIS.Persistence.csproj", "{8A51D6B9-49AA-4E32-BEBB-13540D6A8A62}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABIS.Common", "ABIS.Common\ABIS.Common.csproj", "{A2400888-014B-442F-BF6E-057F22EAF1B6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ABIS.BusinessLogic", "ABIS.BusinessLogic\ABIS.BusinessLogic.csproj", "{EC55DB95-C567-454A-AF8F-86F13306528C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D62786B9-F3F1-4C12-9EA1-527E8B37EB6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D62786B9-F3F1-4C12-9EA1-527E8B37EB6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D62786B9-F3F1-4C12-9EA1-527E8B37EB6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D62786B9-F3F1-4C12-9EA1-527E8B37EB6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A51D6B9-49AA-4E32-BEBB-13540D6A8A62}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A51D6B9-49AA-4E32-BEBB-13540D6A8A62}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A51D6B9-49AA-4E32-BEBB-13540D6A8A62}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A51D6B9-49AA-4E32-BEBB-13540D6A8A62}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2400888-014B-442F-BF6E-057F22EAF1B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2400888-014B-442F-BF6E-057F22EAF1B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2400888-014B-442F-BF6E-057F22EAF1B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2400888-014B-442F-BF6E-057F22EAF1B6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EC55DB95-C567-454A-AF8F-86F13306528C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC55DB95-C567-454A-AF8F-86F13306528C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC55DB95-C567-454A-AF8F-86F13306528C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC55DB95-C567-454A-AF8F-86F13306528C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
