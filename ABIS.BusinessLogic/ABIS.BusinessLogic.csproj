@@ -8,13 +8,19 @@
 
     <ItemGroup>
       <Folder Include="AutomapperProfiles" />
-      <Folder Include="Services" />
-      <Folder Include="ValidationRules" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="AutoMapper" Version="11.0.1" />
+      <PackageReference Include="MailKit" Version="3.3.0" />
       <PackageReference Include="Microsoft.AspNetCore.Cryptography.KeyDerivation" Version="6.0.8" />
+      <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="6.0.0" />
+      <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" Version="6.10.0" />
+      <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.10.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ABIS.Common\ABIS.Common.csproj" />
     </ItemGroup>
 
 </Project>

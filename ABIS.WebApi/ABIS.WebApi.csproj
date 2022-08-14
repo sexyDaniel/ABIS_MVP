@@ -23,4 +23,8 @@
       <ProjectReference Include="..\ABIS.Persistence\ABIS.Persistence.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="DTOs\" />
+    </ItemGroup>
+
 </Project>

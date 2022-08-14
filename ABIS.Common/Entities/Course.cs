@@ -1,4 +1,6 @@
-﻿namespace ABIS.Common.Entities;
+﻿using ABIS.Common.Enums;
+
+namespace ABIS.Common.Entities;
 
 public class Course
 {
@@ -12,6 +14,8 @@ public class Course
     public int Id { get; set; }
     public string Title { get; set; }
     public string Discription { get; set; }
+    public string? Image { get; set; }
+    public CourseStatus CourseStatus { get; set; } = CourseStatus.Draft;
 
     public ICollection<User> Users { get; set; }
     public ICollection<CourseSubItem> CourseSubItem { get; set; }

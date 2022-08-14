@@ -20,5 +20,8 @@ public class StructuralUnitConfiguration : IEntityTypeConfiguration<StructuralUn
             .WithMany(csi => csi.StructuralUnits)
             .HasForeignKey(u => u.CourseSubItemId)
             .IsRequired();
+
+        builder.HasIndex(u => u.Title)
+           .IsUnique();
     }
 }
