@@ -24,6 +24,7 @@ public class SqlServerDbContext : DbContext, IDbContext
     public DbSet<RatioAnswer> RatioAnswers { get; set; }
     public DbSet<TestStatistic> TestStatistics { get; set; }
     public DbSet<Progress> Progresses { get; set; }
+    public DbSet<Token> Tokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

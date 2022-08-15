@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ABIS.Common.DTOs.CourseDTOs;
 
 namespace ABIS.Common.Interfaces
 {
-    internal interface ICourseService
+    public interface ICourseService
     {
+        Task GetCourseById(int id);
+        Task<ICollection<GetCourseDTO>> GetCoursesAsync(bool isSuperAdmin = false);
+        Task CreateCourseAsync(CreateCourseDTO courseDTO);
+        Task ChangeCourseStatus(int id);
+        Task UpdateCourseAsync(UpdateCourseDTO courseDTO);
     }
 }
