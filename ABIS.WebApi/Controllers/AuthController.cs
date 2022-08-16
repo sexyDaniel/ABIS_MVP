@@ -21,37 +21,34 @@ public class AuthController : BaseController
 
     // POST api/users/registration
     [HttpPost("users/registration")]
-    public async Task<IActionResult> RegistrationAsync([FromBody] RegistrationDTO registrationDTO)
+    public async Task<AuthResponse> RegistrationAsync([FromBody] RegistrationDTO registrationDTO)
     {
         var response = await _authService.RegistrationAsync(registrationDTO);
-        return Ok(response);
+        return response;
     }
 
     // POST api/users/login
     [HttpPost("users/login")]
-    public async Task<IActionResult> LoginAsync([FromBody] LoginDTO loginDTO)
+    public async Task<AuthResponse> LoginAsync([FromBody] LoginDTO loginDTO)
     {
         var response = await _authService.LoginAsync(loginDTO);
-        return Ok(response);
+        return response;
     }
 
     // GET api/users/check-email
     [HttpGet("users/check-email")]
-    public async Task<IActionResult> CheckEmailAsync([FromBody] string email)
+    public async Task<CheckEmailDTO> CheckEmailAsync([FromQuery] string email)
     {
         var response = await _authService.CheckEmailAsync(email);
-        return Ok(response);
+        return response;
     }
 
     // GET api/users/auth-data
     [Authorize]
     [HttpGet("users/auth-data")]
-    public async Task<IActionResult> AuthDataAsync()
+    public async Task<AuthData> AuthDataAsync()
     {
-        return Ok(new 
-        { 
-            role = User.FindFirst(ClaimTypes.Role).Value,
-            id = User.FindFirst(ClaimTypes.Sid).Value,
-        });
+        var response = await _authService.GetAuthData(UserId);
+        return response;
     }
 }

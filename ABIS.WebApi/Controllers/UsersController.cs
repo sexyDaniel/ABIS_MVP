@@ -3,6 +3,7 @@ using ABIS.Common.Interfaces;
 using ABIS.WebApi.Filters;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using ABIS.Common.DTOs.AuthDTOs;
 
 namespace ABIS.WebApi.Controllers
 {
@@ -37,11 +38,11 @@ namespace ABIS.WebApi.Controllers
         }
 
         [HttpPatch("users/change-password")]
-        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordDTO passwordDTO)
+        public async Task<AuthResponse> ChangePasswordAsync(ChangePasswordDTO passwordDTO)
         {
-            await _userService.ChangePassword(passwordDTO);
+            var response = await _userService.ChangePassword(passwordDTO);
 
-            return Ok();
+            return response;
         }
     }
 }

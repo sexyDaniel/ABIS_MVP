@@ -1,9 +1,12 @@
-﻿using ABIS.BusinessLogic.ValidationRules;
+﻿using ABIS.BusinessLogic.AutomapperProfiles;
+using ABIS.BusinessLogic.ValidationRules;
 using ABIS.Common.DTOs.CourseDTOs;
 using ABIS.Common.Entities;
 using ABIS.Common.Enums;
 using ABIS.Common.Exceptions;
 using ABIS.Common.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ABIS.BusinessLogic.Services
@@ -11,10 +14,12 @@ namespace ABIS.BusinessLogic.Services
     public class CourseService : ICourseService
     {
         private readonly IDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CourseService(IDbContext context)
+        public CourseService(IDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task ChangeCourseStatus(int id)
@@ -65,9 +70,15 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task GetCourseById(int id)
+        public async Task<GetCourseByIdDTO> GetCourseById(int id)
         {
-            throw new NotImplementedException();
+            var course = await _context.Courses
+                .Include(c => c.CourseSubItem.OrderByDescending(v=>v.Number))
+                .ThenInclude(csi => csi.StructuralUnits.OrderBy(v => v.Title))
+                .ProjectTo<GetCourseByIdDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(c => c.CourseId == id);
+
+            return course;
         }
 
         public async Task<ICollection<GetCourseDTO>> GetCoursesAsync(bool isSuperAdmin = false)

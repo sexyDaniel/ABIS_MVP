@@ -7,5 +7,6 @@ namespace ABIS.Common.Interfaces
         Task<AuthResponse> RegistrationAsync(RegistrationDTO registrationDTO);
         Task<AuthResponse> LoginAsync(LoginDTO loginDTO);
         Task<CheckEmailDTO> CheckEmailAsync(string email);
+        Task<AuthData> GetAuthData(Guid? userId);
     }
 }

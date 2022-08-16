@@ -16,6 +16,7 @@ namespace ABIS.BusinessLogic.Services
             _context = context;
             _securityService = securityService;
         }
+
         public async Task<CheckEmailDTO> CheckEmailAsync(string email)
         {
             var user = await _context.Users
@@ -104,6 +105,22 @@ namespace ABIS.BusinessLogic.Services
             {
                 AccessToken = _securityService.GetJwtToken(user)
             };
+        }
+
+        public async Task<AuthData> GetAuthData(Guid? userId)
+        {
+            var authData = await _context.Users
+                .Select(u => new AuthData() 
+                {
+                    Email = u.Email,
+                    Role = u.Role.ToString(),
+                    FirstName = u.FirstName,
+                    LastName = u.LastName,
+                    Id = u.Id
+                })
+                .SingleOrDefaultAsync(u => u.Id == userId);
+
+            return authData;
         }
     }
 }

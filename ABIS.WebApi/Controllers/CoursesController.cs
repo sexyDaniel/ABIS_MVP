@@ -44,21 +44,31 @@ namespace ABIS.WebApi.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpGet("courses")]
-        public async Task<IActionResult> GetCoursesAsync()
+        public async Task<ICollection<GetCourseDTO>> GetCoursesAsync()
         {
             var response = await _courseService.GetCoursesAsync();
 
-            return Ok(response);
+            return response;
+        }
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet("courses/{id:int}/for-super-admin")]
+        public async Task<GetCourseByIdDTO> GetCourseForSuperUserAsync(int id)
+        {
+            var response = await _courseService.GetCourseById(id);
+
+            return response;
         }
 
         [HttpGet("courses/for-super-admin")]
         [Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> GetCoursesForSuperAdminAsync()
+        public async Task<ICollection<GetCourseDTO>> GetCoursesForSuperAdminAsync()
         {
             var response = await _courseService.GetCoursesAsync(true);
 
-            return Ok(response);
+            return response;
         }
 
     }

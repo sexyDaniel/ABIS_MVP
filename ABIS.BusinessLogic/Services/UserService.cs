@@ -1,4 +1,5 @@
-﻿using ABIS.Common.DTOs.UserDTOs;
+﻿using ABIS.Common.DTOs.AuthDTOs;
+using ABIS.Common.DTOs.UserDTOs;
 using ABIS.Common.Entities;
 using ABIS.Common.Enums;
 using ABIS.Common.Exceptions;
@@ -21,7 +22,7 @@ namespace ABIS.BusinessLogic.Services
             _securityService = securityService;
         }
 
-        public async Task ChangePassword(ChangePasswordDTO passwordDTO)
+        public async Task<AuthResponse> ChangePassword(ChangePasswordDTO passwordDTO)
         {
             var token = await _context.Tokens
                 .FirstOrDefaultAsync(t => t.Email == passwordDTO.Email && t.Value == passwordDTO.Token);
@@ -46,15 +47,17 @@ namespace ABIS.BusinessLogic.Services
 
             await _context.SaveChangesAsync();
             await _tokenService.DeletePasswordToken(passwordDTO.Email);
+
+            return new AuthResponse() { AccessToken = _securityService.GetJwtToken(user) };
         }
 
         public async Task CreateUserAsync(CreateUserDTO userDTO, Guid? adminId)
         {
-            var isCompanyExists = await _context.Companies
+            var company = await _context.Companies
                 .Include(c => c.Users)
-                .AnyAsync(c => c.Id == userDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
+                .SingleOrDefaultAsync(c => c.Id == userDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
 
-            if (!isCompanyExists)
+            if (company == null)
             {
                 throw new NotFoundException($"Такой компании не существует");
             }
@@ -72,8 +75,9 @@ namespace ABIS.BusinessLogic.Services
             {
                 Email = userDTO.Email,
                 Role = userDTO.Role,
-                CompanyId = userDTO.CompanyId
             };
+
+            user.Companies.Add(company);
 
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
@@ -85,11 +89,11 @@ namespace ABIS.BusinessLogic.Services
 
         public async Task CreateUsersAsync(CreateUsersDTO usersDTO ,Guid? adminId)
         {
-            var isCompanyExists = await _context.Companies
+            var company = await _context.Companies
                 .Include(c => c.Users)
-                .AnyAsync(c => c.Id == usersDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
+                .SingleOrDefaultAsync(c => c.Id == usersDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
 
-            if (!isCompanyExists) 
+            if (company == null) 
             {
                 throw new NotFoundException($"Такой компании не существует");
             }
@@ -105,11 +109,16 @@ namespace ABIS.BusinessLogic.Services
             }
 
             var users = usersDTO.Emails
-                .Select(dto => new User() 
-                { 
-                    Email = dto,
-                    Role = Roles.User,
-                    CompanyId = usersDTO.CompanyId
+                .Select(dto => 
+                {
+                    var user = new User()
+                    {
+                        Email = dto,
+                        Role = Roles.User,
+                    };
+                    user.Companies.Add(company);
+
+                    return user;
                 });
 
             await _context.Users.AddRangeAsync(users);

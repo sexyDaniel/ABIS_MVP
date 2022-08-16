@@ -1,4 +1,4 @@
-﻿
+﻿using ABIS.Common.DTOs.AuthDTOs;
 using ABIS.Common.DTOs.UserDTOs;
 
 namespace ABIS.Common.Interfaces
@@ -7,7 +7,7 @@ namespace ABIS.Common.Interfaces
     {
         Task CreateUserAsync(CreateUserDTO userDTO, Guid? adminId);
         Task CreateUsersAsync(CreateUsersDTO usersDTO, Guid? adminId);
-        Task ChangePassword(ChangePasswordDTO passwordDTO);
+        Task<AuthResponse> ChangePassword(ChangePasswordDTO passwordDTO);
         Task UpdateUserAsync();
         Task DeleteUserAsync();
     }
