@@ -1,0 +1,51 @@
+.header {
+    background-color: var(--bg-color);
+}
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    svg {
+        fill: var(--accent-color);
+        font-size: 22px;
+    }
+}
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 60px;
+}
+.dropdown {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+.menu {
+    margin-top: 20px;
+    background-color: var(--bg-color);
+    overflow: hidden;
+}
+.link,
+.btn {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+
+    width: 100%;
+
+    padding: 10px 20px;
+    transition: transform 0.3s ease;
+    @media (any-hover: hover) {
+        &:hover {
+            transform: translateX(5px);
+        }
+    }
+}
+.btn {
+    outline: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+}

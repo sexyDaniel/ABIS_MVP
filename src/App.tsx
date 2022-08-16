@@ -1,0 +1,75 @@
+import { adminRoutes, publicRoutes, superAdminRoutes, userRoutes } from './routes';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useAppDispatch, useAppSelector } from './hooks/redux';
+import AdminNavBar from './components/AdminNavBar/AdminNavBar';
+import { setUser } from './store/reducers/UserSlice';
+import { authAPI } from './services/authService';
+import Layout from './components/Layout/Layout';
+import React, { useEffect } from 'react';
+import { Spin } from 'antd';
+
+import styles from './App.module.scss';
+
+import 'antd/dist/antd.css';
+import './vars.scss';
+
+const App = () => {
+    const dispatch = useAppDispatch();
+    const { accessToken } = useAppSelector((state) => state.token);
+    const { data, isLoading } = authAPI.useGetUserQuery(undefined, { skip: !accessToken });
+
+    useEffect(() => {
+        if (data) dispatch(setUser(data));
+    }, [data, dispatch]);
+
+    if (isLoading)
+        return (
+            <div className={styles.spin}>
+                <Spin size='large' />
+            </div>
+        );
+
+    const defaultPath = !data
+        ? publicRoutes.defaultPath
+        : data.role === 'User'
+        ? userRoutes.defaultPath
+        : data.role === 'Admin'
+        ? adminRoutes.defaultPath
+        : superAdminRoutes.defaultPath;
+
+    return (
+        <BrowserRouter>
+            <Layout>
+                <Routes>
+                    {data?.role === 'User' &&
+                        userRoutes.routes.map(({ path, Component }) => (
+                            <Route key={path} path={path} element={<Component />} />
+                        ))}
+                    {data?.role === 'Admin' &&
+                        adminRoutes.routes.map(({ path, Component }) => (
+                            <Route
+                                key={path}
+                                path={path}
+                                element={
+                                    <>
+                                        <AdminNavBar />
+                                        <Component />
+                                    </>
+                                }
+                            />
+                        ))}
+                    {data?.role === 'SuperAdmin' &&
+                        superAdminRoutes.routes.map(({ path, Component }) => (
+                            <Route key={path} path={path} element={<Component />} />
+                        ))}
+                    {publicRoutes.routes.map(({ path, Component }) => (
+                        <Route key={path} path={path} element={<Component />} />
+                    ))}
+                    <Route path='*' element={<Navigate to={defaultPath} replace />} />
+                </Routes>
+            </Layout>
+        </BrowserRouter>
+    );
+};
+
+export default App;

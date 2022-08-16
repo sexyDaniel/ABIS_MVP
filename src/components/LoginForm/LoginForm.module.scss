@@ -1,0 +1,15 @@
+.reset {
+    display: inline-block;
+    border: none;
+    background: none;
+    outline: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+
+    margin-left: 10px;
+    @media (any-hover: hover) {
+        &:hover {
+            color: var(--accent-color);
+        }
+    }
+}
