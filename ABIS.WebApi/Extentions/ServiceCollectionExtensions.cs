@@ -14,7 +14,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<IDbContext, SqlServerDbContext>(config =>
         {
             config
-                .UseSqlServer(configuration.GetConnectionString("RemoteConnection"))
+                .UseSqlServer(configuration.GetConnectionString("DefaultConnection"))
                 .UseLoggerFactory(LoggerFactory.Create(loggerConfig =>
                 {
                     loggerConfig.AddConsole();

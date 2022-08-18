@@ -20,8 +20,5 @@ public class CourseSubItemConfiguration : IEntityTypeConfiguration<CourseSubItem
             .WithMany(c => c.CourseSubItem)
             .HasForeignKey(csi => csi.CourseId)
             .IsRequired();
-
-        builder.HasIndex(csi => csi.Title)
-            .IsUnique();
     }
 }

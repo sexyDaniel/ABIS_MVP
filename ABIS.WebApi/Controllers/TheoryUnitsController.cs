@@ -32,5 +32,14 @@ namespace ABIS.WebApi.Controllers
             await _theoryUnitService.UpdateTheoryUnitAsync(updateTheoryUnitDTO);
             return Ok();
         }
+
+        [HttpGet("theory-units/{id:int}/for-super-admin")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id)
+        {
+            var response = await _theoryUnitService.GetTheoryUnitByIdAsync(id);
+
+            return response;
+        }
     }
 }

@@ -6,6 +6,6 @@ public interface ITestUnitService
 {
     Task CreateTestUnit(CreateTestUnitDTO createTestUnitDTO);
     Task UpdateTestUnit(UpdateTestUnitDTO updateTestUnitDTO);
-    Task GetTestUnitById();
+    Task<GetTestUnitByIdDTO> GetTestUnitById(int id);
 }
 

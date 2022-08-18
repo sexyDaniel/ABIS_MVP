@@ -35,5 +35,14 @@ namespace ABIS.WebApi.Controllers
 
             return Ok();
         }
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet("course-sub-items/{id:int}/for-super-admin")]
+        public async Task<GetCourseSubitemByIdDTO> GetCourseSubitemByIdAsync(int id)
+        {
+            var response = await _courseSubitemService.GetCurseSubitemByIdAsync(id);
+
+            return response;
+        }
     }
 }

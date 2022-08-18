@@ -110,13 +110,15 @@ namespace ABIS.BusinessLogic.Services
         public async Task<AuthData> GetAuthData(Guid? userId)
         {
             var authData = await _context.Users
+                .Include(u => u.Companies)
                 .Select(u => new AuthData() 
                 {
                     Email = u.Email,
                     Role = u.Role.ToString(),
                     FirstName = u.FirstName,
                     LastName = u.LastName,
-                    Id = u.Id
+                    Id = u.Id,
+                    IsCompanyExists = u.Companies.Any()
                 })
                 .SingleOrDefaultAsync(u => u.Id == userId);
 

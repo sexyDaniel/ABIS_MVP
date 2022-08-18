@@ -20,9 +20,25 @@ namespace ABIS.WebApi.Controllers
 
         [HttpPost("test-units/create")]
         [Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> CreateTheoryUnitAsync([FromBody] CreateTestUnitDTO createTestUnitDTO)
+        public async Task<IActionResult> CreateTestUnitAsync([FromBody] CreateTestUnitDTO createTestUnitDTO)
         {
             await _testUnitService.CreateTestUnit(createTestUnitDTO);
+            return Ok();
+        }
+
+        [HttpGet("test-units/{id:int}/for-super-admin")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<GetTestUnitByIdDTO> GetTestUnitAsync(int id)
+        {
+            var response = await _testUnitService.GetTestUnitById(id);
+            return response;
+        }
+
+        [HttpPut("test-units/{id:int}/update")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> UpdateTestUnitAsync(UpdateTestUnitDTO updateTestUnitDTO)
+        {
+             await _testUnitService.UpdateTestUnit(updateTestUnitDTO);
             return Ok();
         }
     }

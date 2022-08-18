@@ -17,6 +17,15 @@ namespace ABIS.WebApi.Controllers
             _courseService = course;
         }
 
+        [Authorize(Roles = "User")]
+        [HttpPost("courses/{id:int}/add-to-course")]
+        public async Task<IActionResult> AddUserToCourseAsync(int id)
+        {
+            await _courseService.AddUserToCourse(UserId, id);
+
+            return Ok();
+        }
+
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost("courses/create")]
         public async Task<IActionResult> CreateCourseAsync(CreateCourseDTO courseDTO) 
@@ -27,7 +36,7 @@ namespace ABIS.WebApi.Controllers
         }
 
         [Authorize(Roles = "SuperAdmin")]
-        [HttpPost("courses/update")]
+        [HttpPost("courses/{id:int}/update")]
         public async Task<IActionResult> UpdateCourseAsync(UpdateCourseDTO courseDTO)
         {
             await _courseService.UpdateCourseAsync(courseDTO);
@@ -49,6 +58,15 @@ namespace ABIS.WebApi.Controllers
         public async Task<ICollection<GetCourseDTO>> GetCoursesAsync()
         {
             var response = await _courseService.GetCoursesAsync();
+
+            return response;
+        }
+
+        [Authorize]
+        [HttpGet("courses/for-user")]
+        public async Task<ICollection<GetCourseDTO>> GetUserCoursesAsync()
+        {
+            var response = await _courseService.GetUserCourses(UserId);
 
             return response;
         }

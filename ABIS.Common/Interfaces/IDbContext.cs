@@ -19,6 +19,7 @@ public interface IDbContext
     public DbSet<TestStatistic> TestStatistics { get; set; }
     public DbSet<Progress> Progresses { get; set; }
     public DbSet<Token> Tokens { get; set; }
+    //public DbSet<CourseUser> CourseUser { get; set; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }

@@ -3,6 +3,8 @@ using ABIS.Common.DTOs.CourseSubitemDTOs;
 using ABIS.Common.Entities;
 using ABIS.Common.Exceptions;
 using ABIS.Common.Interfaces;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ABIS.BusinessLogic.Services
@@ -10,10 +12,12 @@ namespace ABIS.BusinessLogic.Services
     public class CourseSubitemService : ICourseSubitemService
     {
         private readonly IDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CourseSubitemService(IDbContext context)
+        public CourseSubitemService(IDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         public async Task CreateCurseSubitemAsync(CreateCourseSubitemDTO createCourseSubitemDTO)
@@ -34,17 +38,10 @@ namespace ABIS.BusinessLogic.Services
                 throw new NotFoundException("Такого курса нет");
             }
 
-            var isSubItemExist = await _context.CourseSubItems
-                .AnyAsync(csi => csi.Title == createCourseSubitemDTO.Title);
-            if (isSubItemExist) 
-            {
-                throw new BusinessLogicException("Подраздел с таким заголовком уже есть");
-            }
-
             var subItem = new CourseSubItem() 
             {
                 Title = createCourseSubitemDTO.Title,
-                Discription = createCourseSubitemDTO.Discription,
+                Discription = createCourseSubitemDTO.Description,
                 Number = createCourseSubitemDTO.Number,
                 CourseId = createCourseSubitemDTO.CourseId
             };
@@ -53,9 +50,14 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task GetCurseSubitemByIdAsync(int id)
+        public async Task<GetCourseSubitemByIdDTO> GetCurseSubitemByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var subItem = await _context.CourseSubItems
+                .Include(c => c.StructuralUnits)
+                .ProjectTo<GetCourseSubitemByIdDTO>(_mapper.ConfigurationProvider)
+                .SingleOrDefaultAsync(c => c.Id == id);
+
+            return subItem;
         }
 
         public async Task UpdateCurseSubitemAsync(UpdateCourseSubItemDTO updateCourseSubItemDTO)

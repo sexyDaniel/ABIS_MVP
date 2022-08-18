@@ -7,6 +7,6 @@ namespace ABIS.Common.Interfaces
     {
         Task CreateTheoryUnitAsync(CreateTheoryUnitDTO createTheoryUnitDTO);
         Task UpdateTheoryUnitAsync(UpdateTheoryUnitDTO updateTheoryUnitDTO);
-        Task GetTheoryUnitByIdAsunc(int id);
+        Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id);
     }
 }

@@ -25,6 +25,7 @@ public class SqlServerDbContext : DbContext, IDbContext
     public DbSet<TestStatistic> TestStatistics { get; set; }
     public DbSet<Progress> Progresses { get; set; }
     public DbSet<Token> Tokens { get; set; }
+   // public DbSet<CourseUser> CourseUser { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

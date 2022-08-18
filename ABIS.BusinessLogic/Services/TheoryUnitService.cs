@@ -36,14 +36,6 @@ namespace ABIS.BusinessLogic.Services
                 throw new NotFoundException("Такого пункта нет");
             }
 
-            var isUnitExists = await _context.StructuralUnits
-                .AnyAsync(su => su.Title == createTheoryUnitDTO.Title);
-
-            if (isUnitExists)
-            {
-                throw new BusinessLogicException("Такой заголовок уже есть");
-            }
-
             var theory = new TheoryUnit() 
             {
                 Body = createTheoryUnitDTO.Body,
@@ -56,9 +48,20 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task GetTheoryUnitByIdAsunc(int id)
+        public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id)
         {
-            throw new NotImplementedException();
+            var theoryUnit = await _context.TheoryUnits
+                .Select(tu => new GetTheoruUnitByIdDTO()
+                {
+                    Id = tu.Id,
+                    Number = tu.Id,
+                    Title = tu.Title,
+                    CourseSubItemId = tu.CourseSubItemId,
+                    Body = tu.Body
+                })
+                .SingleOrDefaultAsync(tu => tu.Id == id);
+
+            return theoryUnit;
         }
 
         public async Task UpdateTheoryUnitAsync(UpdateTheoryUnitDTO updateTheoryUnitDTO)

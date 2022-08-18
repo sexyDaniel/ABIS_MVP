@@ -6,6 +6,6 @@ namespace ABIS.Common.DTOs.CourseSubitemDTOs
         public int CourseId { get; set; }
         public int Number { get; set; }
         public string Title { get; set; }
-        public string? Discription { get; set; }
+        public string? Description { get; set; }
     }
 }

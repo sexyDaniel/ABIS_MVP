@@ -9,5 +9,7 @@ namespace ABIS.Common.Interfaces
         Task CreateCourseAsync(CreateCourseDTO courseDTO);
         Task ChangeCourseStatus(int id);
         Task UpdateCourseAsync(UpdateCourseDTO courseDTO);
+        Task AddUserToCourse(Guid? userId, int courseId);
+        Task<ICollection<GetCourseDTO>> GetUserCourses(Guid? userId);
     }
 }

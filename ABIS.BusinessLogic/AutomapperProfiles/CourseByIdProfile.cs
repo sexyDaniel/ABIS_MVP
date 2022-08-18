@@ -1,4 +1,5 @@
-﻿using ABIS.Common.DTOs.CourseDTOs;
+﻿using ABIS.Common.DTOs.CommonDTOs;
+using ABIS.Common.DTOs.CourseDTOs;
 using ABIS.Common.Entities;
 using AutoMapper;
 
@@ -16,8 +17,11 @@ namespace ABIS.BusinessLogic.AutomapperProfiles
                 dto => dto.CourseId,
                 opt => opt.MapFrom(c => c.Id))
             .ForMember(
-                dto => dto.Discription,
+                dto => dto.Description,
                 opt => opt.MapFrom(c => c.Discription))
+            .ForMember(
+                dto => dto.Image,
+                opt => opt.MapFrom(c => c.Image))
             .ForMember(
                 dto => dto.SubItems,
                 opt => opt.MapFrom(c => c.CourseSubItem.OrderBy(u => u.Number)));
@@ -36,6 +40,9 @@ namespace ABIS.BusinessLogic.AutomapperProfiles
                 dto => dto.Id,
                 opt => opt.MapFrom(s => s.Id))
             .ForMember(
+                dto => dto.Number,
+                opt => opt.MapFrom(s => s.Number))
+            .ForMember(
                 dto => dto.Units,
                 opt => opt.MapFrom(c => c.StructuralUnits.OrderBy(u=>u.Number)));
         }
@@ -52,6 +59,9 @@ namespace ABIS.BusinessLogic.AutomapperProfiles
             .ForMember(
                 dto => dto.Id,
                 opt => opt.MapFrom(s => s.Id))
+            .ForMember(
+                dto => dto.Number,
+                opt => opt.MapFrom(s => s.Number))
             .ForMember(
                 dto => dto.Type,
                 opt => opt.MapFrom(s => s is TheoryUnit ? "Theory" : "Test"));

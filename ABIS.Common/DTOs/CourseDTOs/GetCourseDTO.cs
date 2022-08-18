@@ -6,8 +6,7 @@ namespace ABIS.Common.DTOs.CourseDTOs
     {
         public int Id { get; set; }
         public string Title { get; set; }
-        public string Discription { get; set; }
         public string? Image { get; set; }
-        public CourseStatus CourseStatus { get; set; } = CourseStatus.Draft;
+        public string CourseStatus { get; set; }
     }
 }

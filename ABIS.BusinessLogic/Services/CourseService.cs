@@ -22,6 +22,30 @@ namespace ABIS.BusinessLogic.Services
             _mapper = mapper;
         }
 
+        public async Task AddUserToCourse(Guid? userId, int courseId)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Users)
+                .SingleOrDefaultAsync(c => c.Id == courseId);
+
+            if (course == null) 
+            {
+                throw new NotFoundException("Курс не найден");
+            }
+
+            var isUserInCourse = course.Users.Any(u => u.Id == userId);
+
+            if (isUserInCourse)
+            {
+                throw new BusinessLogicException("Пользователь уже записан на этот курс");
+            }
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+
+            course.Users.Add(user);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task ChangeCourseStatus(int id)
         {
             var course = await _context.Courses
@@ -89,9 +113,25 @@ namespace ABIS.BusinessLogic.Services
                 {
                     Id = c.Id,
                     Image = c.Image,
-                    Discription = c.Discription,
                     Title = c.Title,
-                    CourseStatus = c.CourseStatus
+                    CourseStatus = c.CourseStatus.ToString()
+                })
+                .ToListAsync();
+
+            return courses;
+        }
+
+        public async Task<ICollection<GetCourseDTO>> GetUserCourses(Guid? userId)
+        {
+            var courses = await _context.Courses
+                .Include(c => c.Users)
+                .Where(c => c.CourseStatus == Common.Enums.CourseStatus.Publish && c.Users.Any(u => u.Id == userId))
+                .Select(c => new GetCourseDTO()
+                {
+                    Id = c.Id,
+                    Image = c.Image,
+                    Title = c.Title,
+                    CourseStatus = c.CourseStatus.ToString()
                 })
                 .ToListAsync();
 
@@ -109,7 +149,7 @@ namespace ABIS.BusinessLogic.Services
             }
 
             course.Title = courseDTO.Title;
-            course.Discription = courseDTO.Discription;
+            course.Discription = courseDTO.Description;
             course.Image = courseDTO.Image;
 
             await _context.SaveChangesAsync();

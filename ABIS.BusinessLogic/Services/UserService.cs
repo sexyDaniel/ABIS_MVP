@@ -1,10 +1,12 @@
-﻿using ABIS.Common.DTOs.AuthDTOs;
+﻿using ABIS.BusinessLogic.ValidationRules;
+using ABIS.Common.DTOs.AuthDTOs;
 using ABIS.Common.DTOs.UserDTOs;
 using ABIS.Common.Entities;
 using ABIS.Common.Enums;
 using ABIS.Common.Exceptions;
 using ABIS.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Web;
 
 namespace ABIS.BusinessLogic.Services
 {
@@ -24,8 +26,10 @@ namespace ABIS.BusinessLogic.Services
 
         public async Task<AuthResponse> ChangePassword(ChangePasswordDTO passwordDTO)
         {
+            var decodedEmail = HttpUtility.UrlDecode(passwordDTO.Email);
+            var decodedToken = HttpUtility.UrlDecode(passwordDTO.Token);
             var token = await _context.Tokens
-                .FirstOrDefaultAsync(t => t.Email == passwordDTO.Email && t.Value == passwordDTO.Token);
+                .FirstOrDefaultAsync(t => t.Email == decodedEmail && t.Value == decodedToken);
 
             if (token == null) 
             {
@@ -33,7 +37,7 @@ namespace ABIS.BusinessLogic.Services
             }
 
             var user = await _context.Users
-                .SingleOrDefaultAsync(u => u.Email == passwordDTO.Email);
+                .SingleOrDefaultAsync(u => u.Email == decodedEmail);
 
             if (user == null) 
             {
@@ -46,13 +50,24 @@ namespace ABIS.BusinessLogic.Services
             user.Salt = Convert.ToBase64String(salt);
 
             await _context.SaveChangesAsync();
-            await _tokenService.DeletePasswordToken(passwordDTO.Email);
+            await _tokenService.DeletePasswordToken(decodedEmail);
 
             return new AuthResponse() { AccessToken = _securityService.GetJwtToken(user) };
         }
 
         public async Task CreateUserAsync(CreateUserDTO userDTO, Guid? adminId)
         {
+            var errors = new UserValidationRules()
+                .CheckRole(userDTO.Role)
+                .CheckPasswordSavedLink(userDTO.PasswordSavedLink)
+                .CheckEmails(new string[] { userDTO.Email})
+                .GetErrors();
+
+            if (errors.Count > 0)
+            {
+                throw new ValidationException(string.Join(' ', errors));
+            }
+
             var company = await _context.Companies
                 .Include(c => c.Users)
                 .SingleOrDefaultAsync(c => c.Id == userDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
@@ -89,6 +104,16 @@ namespace ABIS.BusinessLogic.Services
 
         public async Task CreateUsersAsync(CreateUsersDTO usersDTO ,Guid? adminId)
         {
+            var errors = new UserValidationRules()
+                .CheckPasswordSavedLink(usersDTO.PasswordSavedLink)
+                .CheckEmails(usersDTO.Emails)
+                .GetErrors();
+
+            if (errors.Count > 0)
+            {
+                throw new ValidationException(string.Join(' ', errors));
+            }
+
             var company = await _context.Companies
                 .Include(c => c.Users)
                 .SingleOrDefaultAsync(c => c.Id == usersDTO.CompanyId && c.Users.Any(u => u.Id == adminId));
@@ -129,14 +154,43 @@ namespace ABIS.BusinessLogic.Services
                 usersDTO.PasswordSavedLink);
         }
 
-        public Task DeleteUserAsync()
+        public async Task DeleteUserAsync(Guid? id)
         {
-            throw new NotImplementedException();
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Id == id);
+
+            if (user == null)
+            {
+                throw new NotFoundException($"Такого пользователя нет");
+            }
+
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateUserAsync()
+        public async Task UpdateUserAsync(UpdateUserDTO updateUserDTO, Guid? userId)
         {
-            throw new NotImplementedException();
+            var errors = new UserValidationRules()
+                .CheckEmails(new string[] { updateUserDTO.Email})
+                .GetErrors();
+
+            if (errors.Count > 0) 
+            {
+                throw new ValidationException(string.Join(' ', errors));
+            }
+
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+
+            if (user == null) 
+            {
+                throw new NotFoundException($"Такого пользователя нет");
+            }
+
+            user.Email = updateUserDTO.Email;
+            user.FirstName = updateUserDTO.FirstName;
+            user.LastName = updateUserDTO.LastName;
+
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -35,14 +35,6 @@ namespace ABIS.BusinessLogic.Services
                 throw new NotFoundException("Такого пункта нет");
             }
 
-            var isUnitExists = await _context.StructuralUnits
-                .AnyAsync(su => su.Title == createTestUnitDTO.Title);
-
-            if (isUnitExists)
-            {
-                throw new BusinessLogicException("Такой заголовок уже есть");
-            }
-
             var test = new TestUnit()
             {
                 Number = createTestUnitDTO.Number,
@@ -54,14 +46,53 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public Task GetTestUnitById()
+        public async Task<GetTestUnitByIdDTO> GetTestUnitById(int id)
         {
-            throw new NotImplementedException();
+            var testUnit = await _context.TestUnits
+                .Select(tu => new GetTestUnitByIdDTO()
+                {
+                    Id = tu.Id,
+                    Number = tu.Number,
+                    Title = tu.Title,
+                    CourseSubItemId = tu.CourseSubItemId,
+                })
+                .SingleOrDefaultAsync(tu => tu.Id == id);
+
+            return testUnit;
         }
 
-        public Task UpdateTestUnit(UpdateTestUnitDTO updateTestUnitDTO)
+        public async Task UpdateTestUnit(UpdateTestUnitDTO updateTestUnitDTO)
         {
-            throw new NotImplementedException();
+            var validationErrors = new StructuralUnitValidationRules()
+                .CheckTitle(updateTestUnitDTO.Title)
+                .CheckNumber(updateTestUnitDTO.Number)
+                .GetErrors();
+
+            if (validationErrors.Count > 0)
+            {
+                throw new ValidationException(string.Join(' ', validationErrors));
+            }
+
+            var isTestUnitExists = await _context.TestUnits
+                .AnyAsync(tu => tu.Title == updateTestUnitDTO.Title);
+
+            if (isTestUnitExists)
+            {
+                throw new NotFoundException("Такой заголовок уже есть");
+            }
+
+            var testUnit = await _context.TestUnits
+                .SingleOrDefaultAsync(tu => tu.Id == updateTestUnitDTO.Id);
+
+            if (testUnit == null)
+            {
+                throw new NotFoundException("Такой теории нет");
+            }
+
+            testUnit.Number = updateTestUnitDTO.Number;
+            testUnit.Title = updateTestUnitDTO.Title;
+
+            await _context.SaveChangesAsync();
         }
     }
 }
