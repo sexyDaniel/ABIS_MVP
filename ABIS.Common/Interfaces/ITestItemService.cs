@@ -8,7 +8,7 @@ namespace ABIS.Common.Interfaces
         Task<AnswerForCreateDTO> CreateTestItemAsync(CreateTestItemDTO testItemDTO);
         Task<AnswerForCreateDTO> CreateRatioTestItemAsync(CreateRatioTestitemDTO ratioTestitemDTO);
         Task DeleteTestItemAsync(int testItemId);
-        Task UpdateTestItemAsync();
-        Task GetTestItemAsync();
+        Task UpdateTestItemAsync(UpdateTestItemDTO updateTestItem);
+        Task<ICollection<GetTestItemDTO>> GetTestItemsAsync(int testUnitId);
     }
 }

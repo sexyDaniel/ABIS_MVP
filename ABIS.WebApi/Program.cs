@@ -30,6 +30,8 @@ builder.Services.AddTransient<ITheoryUnitService, TheoryUnitService>();
 builder.Services.AddTransient<ITestUnitService, TestUnitService>();
 builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<ITestItemService, TestItemsService>();
+builder.Services.AddTransient<IAnswerService, AnswersService>();
+builder.Services.AddTransient<IRatioQuestionsService, RatioQuestionsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =

@@ -1,4 +1,5 @@
 ﻿using ABIS.Common.DTOs.AnswerDTOs;
+using ABIS.Common.DTOs.TestItemDTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,23 @@ namespace ABIS.BusinessLogic.ValidationRules
             foreach(var a in answerDTOs) 
             {
                 if (string.IsNullOrEmpty(a.AnswerText) || a.AnswerText.Length > 200) 
+                {
+                    errors.Add("Переданы некорректные ответы (пустая строка или превышение 200 символов)");
+                    break;
+                }
+            }
+
+            return this;
+        }
+
+        public TestItemsValidatioRules CheckRatioItem(ICollection<RatioQuestionDTO> answerDTOs)
+        {
+            foreach (var a in answerDTOs)
+            {
+                if (string.IsNullOrEmpty(a.QuestionText) || 
+                    string.IsNullOrEmpty(a.RightAnswerText) ||
+                    a.QuestionText.Length>200 ||
+                    a.RightAnswerText.Length > 200)
                 {
                     errors.Add("Переданы некорректные ответы (пустая строка или превышение 200 символов)");
                     break;

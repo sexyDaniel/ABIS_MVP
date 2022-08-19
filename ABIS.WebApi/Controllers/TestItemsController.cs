@@ -1,9 +1,10 @@
 ﻿using ABIS.Common.DTOs.TestItemDTOs;
+using ABIS.Common.Exceptions;
 using ABIS.Common.Interfaces;
 using ABIS.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 
 namespace ABIS.WebApi.Controllers
 {
@@ -25,6 +26,42 @@ namespace ABIS.WebApi.Controllers
             var response = await _testItemService.CreateTestItemAsync(createTestItemDTO);
 
             return response;
+        }
+
+        [HttpPost("test-items/create-ratio")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<AnswerForCreateDTO> CreateRatioTestItemAsync([FromBody] CreateRatioTestitemDTO createTestItemDTO)
+        {
+            var response = await _testItemService.CreateRatioTestItemAsync(createTestItemDTO);
+
+            return response;
+        }
+
+        [HttpGet("test-unit/{id:int}/test-items/for-super-admin")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<ICollection<GetTestItemDTO>> GetTestItemAsync(int id)
+        {
+            var response = await _testItemService.GetTestItemsAsync(id);
+
+            return response;
+        }
+
+        [HttpPut("test-items/update")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> UpdateTestItemAsync([FromBody] UpdateTestItemDTO updateTestItemDTO)
+        {
+            await _testItemService.UpdateTestItemAsync(updateTestItemDTO);
+
+            return Ok();
+        }
+
+        [HttpDelete("test-items/{id:int}/delete")]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> DeleteTestItemAsync(int id)
+        {
+            await _testItemService.DeleteTestItemAsync(id);
+
+            return Ok();
         }
     }
 }

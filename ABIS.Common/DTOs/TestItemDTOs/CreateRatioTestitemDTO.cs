@@ -1,12 +1,12 @@
 ﻿
 namespace ABIS.Common.DTOs.TestItemDTOs
 {
-    public class CreateRatioTestitemDTO
+    public class CreateRatioTestitemDTO : CreateBaseTestItemDTO
     {
-        ICollection<RatioQuestion> RatioQuestions { get; set; }
+        public ICollection<RatioQuestionDTO> RatioQuestions { get; set; }
     }
 
-    public class RatioQuestion 
+    public class RatioQuestionDTO 
     {
         public string QuestionText { get; set; }
         public string RightAnswerText { get; set; }
