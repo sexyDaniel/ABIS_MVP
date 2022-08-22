@@ -1,12 +1,14 @@
 import { adminRoutes, publicRoutes, superAdminRoutes, userRoutes } from './routes';
+import FormPageWrapper from './components/FormPageWrapper/FormPageWrapper';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { AdminLinks, SuperAdminLinks, UserLinks } from './const';
 import { useAppDispatch, useAppSelector } from './hooks/redux';
-import AdminNavBar from './components/AdminNavBar/AdminNavBar';
+import NavBar from './components/NavBar/NavBar';
+import PageWrapper from './components/PageWrapper/PageWrapper';
 import { setUser } from './store/reducers/UserSlice';
+import React, { useEffect, useState } from 'react';
 import { authAPI } from './services/authService';
 import Header from './components/Header/Header';
-import React, { useEffect, useState } from 'react';
-import { AdminLinks, SuperAdminLinks, UserLinks } from './const';
 import { Layout, Spin } from 'antd';
 
 import styles from './App.module.scss';
@@ -51,7 +53,7 @@ const App = () => {
                             collapsible
                             collapsed={collapsed}
                             onCollapse={(value) => setCollapsed(value)}>
-                            <AdminNavBar
+                            <NavBar
                                 links={
                                     data.role === 'User'
                                         ? UserLinks
@@ -66,19 +68,51 @@ const App = () => {
                         <React.Suspense fallback={<Spin />}>
                             <Routes>
                                 {data?.role === 'User' &&
-                                    userRoutes.routes.map(({ path, Component }) => (
-                                        <Route key={path} path={path} element={<Component />} />
+                                    userRoutes.routes.map(({ path, Component, title }) => (
+                                        <Route
+                                            key={path}
+                                            path={path}
+                                            element={
+                                                <PageWrapper title={title}>
+                                                    <Component />
+                                                </PageWrapper>
+                                            }
+                                        />
                                     ))}
                                 {data?.role === 'Admin' &&
-                                    adminRoutes.routes.map(({ path, Component }) => (
-                                        <Route key={path} path={path} element={<Component />} />
+                                    adminRoutes.routes.map(({ path, Component, title }) => (
+                                        <Route
+                                            key={path}
+                                            path={path}
+                                            element={
+                                                <PageWrapper title={title}>
+                                                    <Component />
+                                                </PageWrapper>
+                                            }
+                                        />
                                     ))}
                                 {data?.role === 'SuperAdmin' &&
-                                    superAdminRoutes.routes.map(({ path, Component }) => (
-                                        <Route key={path} path={path} element={<Component />} />
+                                    superAdminRoutes.routes.map(({ path, Component, title }) => (
+                                        <Route
+                                            key={path}
+                                            path={path}
+                                            element={
+                                                <PageWrapper title={title}>
+                                                    <Component />
+                                                </PageWrapper>
+                                            }
+                                        />
                                     ))}
-                                {publicRoutes.routes.map(({ path, Component }) => (
-                                    <Route key={path} path={path} element={<Component />} />
+                                {publicRoutes.routes.map(({ path, Component, title }) => (
+                                    <Route
+                                        key={path}
+                                        path={path}
+                                        element={
+                                            <FormPageWrapper title={title}>
+                                                <Component />
+                                            </FormPageWrapper>
+                                        }
+                                    />
                                 ))}
                                 <Route path='*' element={<Navigate to={defaultPath} replace />} />
                             </Routes>

@@ -1,19 +1,15 @@
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { PROFILE_ROUTE, REGISTRATION_ROUTE } from '../../routes';
-import { setToken } from '../../store/reducers/TokenSlice';
 import { Button, Form, Input, message, Typography } from 'antd';
+import { setToken } from '../../store/reducers/TokenSlice';
 import React, { FC, useEffect, useState } from 'react';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../../services/authService';
-import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import styles from './LoginForm.module.scss';
 
-type LoginFormProps = {
-    className?: string;
-};
-
-const LoginForm: FC<LoginFormProps> = () => {
+const LoginForm: FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
 
@@ -21,7 +17,7 @@ const LoginForm: FC<LoginFormProps> = () => {
     const [login, { data: loginData, isLoading: loginIsLoading }] = authAPI.useLoginMutation();
 
     const [email, setEmail] = useState('');
-    const { data, isLoading, isError } = authAPI.useCheckEmailQuery({ email }, { skip: !email });
+    const { data, isLoading, error } = authAPI.useCheckEmailQuery({ email }, { skip: !email });
 
     const onEmailFinish = (values: any) => setEmail(values.email);
     const onPasswordFinish = (values: any) =>
@@ -34,12 +30,16 @@ const LoginForm: FC<LoginFormProps> = () => {
     }, [user, navigate]);
 
     useEffect(() => {
+        if (error) message.error((error as any).data?.message ?? 'Произошла ошибка');
+    }, [error]);
+
+    useEffect(() => {
         if (loginData) dispatch(setToken(loginData.accessToken));
     }, [loginData, dispatch]);
 
     const backToEmail = () => setEmail('');
 
-    if (!email || isLoading || isError) {
+    if (!email || isLoading || error) {
         return (
             <>
                 <Form

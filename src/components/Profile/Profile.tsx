@@ -1,12 +1,12 @@
 import ChangePasswordForm from './ChangePasswordForm/ChangePasswordForm';
-import { authAPI } from '../../services/authService';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
+import { clearToken } from '../../store/reducers/TokenSlice';
+import { authAPI } from '../../services/authService';
 import InfoForm from './InfoForm/InfoForm';
-import React, { FC, useEffect } from 'react';
 import { Button, message } from 'antd';
+import React, { FC } from 'react';
 
 import styles from './Profile.module.scss';
-import { clearToken } from '../../store/reducers/TokenSlice';
 
 type ProfileProps = {
     className?: string;
@@ -28,7 +28,7 @@ const Profile: FC<ProfileProps> = () => {
     };
 
     return (
-        <div className={styles.wrapper}>
+        <>
             <div className={styles.formWrapper}>
                 <InfoForm />
                 <ChangePasswordForm />
@@ -36,7 +36,7 @@ const Profile: FC<ProfileProps> = () => {
             <Button loading={isLoading} className={styles.btn} danger onClick={onDelete}>
                 Удалить профиль
             </Button>
-        </div>
+        </>
     );
 };
 

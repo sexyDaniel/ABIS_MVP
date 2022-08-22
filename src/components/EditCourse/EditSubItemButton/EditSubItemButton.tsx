@@ -1,4 +1,4 @@
-import { courceApi } from '../../services/courseService';
+import { courceApi } from '../../../services/courseService';
 import React, { FC, useEffect, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Spin } from 'antd';

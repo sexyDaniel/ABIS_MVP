@@ -1,23 +1,18 @@
-import { authAPI } from '../../../services/authService';
 import { Button, Form, Input, message, Typography } from 'antd';
+import { authAPI } from '../../../services/authService';
 import { useAppSelector } from '../../../hooks/redux';
 import React, { FC } from 'react';
 
-type InfoFormProps = {
-    className?: string;
-};
-
-const InfoForm: FC<InfoFormProps> = () => {
+const InfoForm: FC = () => {
     const { user } = useAppSelector((state) => state.user);
     const [update, { isLoading }] = authAPI.useUpdateMutation();
+
     const onFinish = (values: any) =>
         update(values)
             .unwrap()
             .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
-    if (!user) {
-        return <div></div>;
-    }
+    if (!user) return <></>;
 
     return (
         <div>

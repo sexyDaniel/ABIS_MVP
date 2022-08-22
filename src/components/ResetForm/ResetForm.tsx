@@ -1,15 +1,11 @@
-import { setToken } from '../../store/reducers/TokenSlice';
 import { Button, Form, Input, message, Typography } from 'antd';
+import { setToken } from '../../store/reducers/TokenSlice';
 import { authAPI } from '../../services/authService';
 import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import React, { FC, useEffect } from 'react';
 
-type ResetFormProps = {
-    className?: string;
-};
-
-const ResetForm: FC<ResetFormProps> = () => {
+const ResetForm: FC = () => {
     const dispatch = useAppDispatch();
     const [setPassword, { data: setPasswordData, isLoading: setPasswordIsLoading }] = authAPI.useSetPasswordMutation();
     const [searchParams] = useSearchParams();

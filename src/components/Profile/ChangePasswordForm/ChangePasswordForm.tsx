@@ -1,11 +1,7 @@
 import { Button, Form, Input, Typography } from 'antd';
 import React, { FC } from 'react';
 
-type ChangePasswordFormProps = {
-    className?: string;
-};
-
-const ChangePasswordForm: FC<ChangePasswordFormProps> = () => {
+const ChangePasswordForm: FC = () => {
     const onFinish = (values: any) => {};
 
     return (

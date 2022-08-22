@@ -6,13 +6,7 @@ import { authAPI } from '../../services/authService';
 import { Link, useNavigate } from 'react-router-dom';
 import React, { FC, useEffect } from 'react';
 
-import styles from './RegistrationForm.module.scss';
-
-type RegistrationFormProps = {
-    className?: string;
-};
-
-const RegistrationForm: FC<RegistrationFormProps> = () => {
+const RegistrationForm: FC = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const { user } = useAppSelector((state) => state.user);

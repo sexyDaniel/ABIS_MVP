@@ -1,7 +1,7 @@
-import React, { FC, useState } from 'react';
-import { usersApi } from '../../services/usersService';
 import { Button, Input, message, Modal, Typography } from 'antd';
+import { usersApi } from '../../services/usersService';
 import TextArea from 'antd/lib/input/TextArea';
+import React, { FC, useState } from 'react';
 import { RESET_ROUTE } from '../../routes';
 import { Role } from '../../types/Role';
 
@@ -12,7 +12,7 @@ type AddUserButtonProps = {
 };
 
 const AddUserButton: FC<AddUserButtonProps> = ({ className, companyId, role = Role.User }) => {
-    const [addUsers, { isLoading }] = usersApi.useAddUsersMutation();
+    const [addUsers, { isLoading: addIsLoading }] = usersApi.useAddUsersMutation();
     const [addUser, { isLoading: userIsLoading }] = usersApi.useAddUserMutation();
     const [emails, setEmails] = useState('');
     const [visible, setVisible] = useState(false);
@@ -37,7 +37,7 @@ const AddUserButton: FC<AddUserButtonProps> = ({ className, companyId, role = Ro
         }
     };
     const showModal = () => setVisible(true);
-    const handleCancel = () => setVisible(false);
+    const closeModal = () => setVisible(false);
     const onChange = (e: any) => setEmails(e.target.value);
 
     if (role === Role.Admin) {
@@ -49,9 +49,9 @@ const AddUserButton: FC<AddUserButtonProps> = ({ className, companyId, role = Ro
                 <Modal
                     visible={visible}
                     title='Добавление администратора'
-                    onCancel={handleCancel}
+                    onCancel={closeModal}
                     footer={[
-                        <Button key='back' onClick={handleCancel}>
+                        <Button key='back' onClick={closeModal}>
                             Отмена
                         </Button>,
                         <Button key='submit' type='primary' loading={userIsLoading} onClick={handleOk}>
@@ -74,12 +74,12 @@ const AddUserButton: FC<AddUserButtonProps> = ({ className, companyId, role = Ro
             <Modal
                 visible={visible}
                 title='Добавление пользователя'
-                onCancel={handleCancel}
+                onCancel={closeModal}
                 footer={[
-                    <Button key='back' onClick={handleCancel}>
+                    <Button key='back' onClick={closeModal}>
                         Отмена
                     </Button>,
-                    <Button key='submit' type='primary' loading={isLoading} onClick={handleOk}>
+                    <Button key='submit' type='primary' loading={addIsLoading} onClick={handleOk}>
                         Добавить
                     </Button>,
                 ]}>

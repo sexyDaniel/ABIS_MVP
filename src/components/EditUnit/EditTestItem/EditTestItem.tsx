@@ -58,16 +58,35 @@ const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
     };
 
     const onDeleteItem = () => {
-        message.loading('Загрузка');
+        message.loading({ content: 'Загрузка', key: testItem.id });
         deleteItem(testItem.id)
             .unwrap()
-            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
+            .then(
+                () => message.success({ content: 'Удалено', key: testItem.id }),
+                (err) => message.error(err.data?.message ?? 'Произошла ошибка')
+            );
     };
+
+    let TestItemType = '';
+    switch (testItem.itemType) {
+        case 'Correlate':
+            TestItemType = 'Сопоставление';
+            break;
+        case 'MultipleAnswers':
+            TestItemType = 'С несколькими вариантами ответа';
+            break;
+        case 'OneAnswer':
+            TestItemType = 'С одним вариантом ответа';
+            break;
+        case 'OpenAnswer':
+            TestItemType = 'С открытым ответом';
+            break;
+    }
 
     return (
         <Space direction='vertical' className={styles.fullWidth}>
             <div className={styles.answerHeader}>
-                <Typography>{testItem.questionText}</Typography>
+                <Typography.Text strong>{testItem.questionText}</Typography.Text>
                 <div>
                     <EditTestItemButton testItem={testItem} />
                     <Button onClick={onDeleteItem}>
@@ -75,6 +94,7 @@ const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
                     </Button>
                 </div>
             </div>
+            <Typography>Тип: {TestItemType}</Typography>
 
             {testItem.answers && (
                 <List

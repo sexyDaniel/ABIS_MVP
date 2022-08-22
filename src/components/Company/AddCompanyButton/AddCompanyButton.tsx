@@ -1,16 +1,14 @@
-import React, { FC, useEffect, useState } from 'react';
-import { courceApi } from '../../services/courseService';
-import SubItemForm from '../SubItemForm/SubItemForm';
 import { Button, message, Modal } from 'antd';
-import { CourseStructure } from '../../types/CourseStructure';
+import React, { FC, useEffect, useState } from 'react';
+import { companyApi } from '../../../services/companyService';
+import CompanyForm from '../CompanyForm/CompanyForm';
 
-type AddSubItemButtonProps = {
-    course: CourseStructure;
+type AddCompanyButtonProps = {
     className?: string;
 };
 
-const AddSubItemButton: FC<AddSubItemButtonProps> = ({ className, course }) => {
-    const [addSubItem, { isLoading }] = courceApi.useAddSubItemMutation();
+const AddCompanyButton: FC<AddCompanyButtonProps> = ({ className }) => {
+    const [addCompany, { isLoading }] = companyApi.useAddCompanyMutation();
     const [visible, setVisible] = useState(false);
 
     const showModal = () => {
@@ -22,7 +20,7 @@ const AddSubItemButton: FC<AddSubItemButtonProps> = ({ className, course }) => {
     };
 
     const onFinish = (values: any) => {
-        addSubItem({ courseId: course.courseId, ...values })
+        addCompany(values)
             .unwrap()
             .then(
                 () => setVisible(false),
@@ -33,24 +31,24 @@ const AddSubItemButton: FC<AddSubItemButtonProps> = ({ className, course }) => {
     return (
         <>
             <Button className={className} onClick={showModal}>
-                Добавить Раздел
+                Добавить компанию
             </Button>
             <Modal
                 visible={visible}
-                title='Добавление раздела'
+                title='Добавление компании'
                 onCancel={handleCancel}
                 footer={[
                     <Button key='back' onClick={handleCancel}>
                         Отмена
                     </Button>,
-                    <Button form='addSubItem' loading={isLoading} key='submit' htmlType='submit' type='primary'>
+                    <Button form='addCompany' loading={isLoading} key='submit' htmlType='submit' type='primary'>
                         Добавить
                     </Button>,
                 ]}>
-                <SubItemForm id='addSubItem' onFinish={onFinish} />
+                <CompanyForm id='addCompany' onFinish={onFinish} />
             </Modal>
         </>
     );
 };
 
-export default AddSubItemButton;
+export default AddCompanyButton;

@@ -6,10 +6,12 @@ export type CourseStructure = {
     subItems: {
         id: number;
         title: string;
+        description?: string;
         units: {
             id: number;
             title: string;
             type: string;
+            isPassed?: boolean;
         }[];
     }[];
 };

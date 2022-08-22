@@ -1,14 +1,17 @@
-import { Button, message, Modal } from 'antd';
+import { companyApi } from '../../../services/companyService';
 import React, { FC, useEffect, useState } from 'react';
-import { companyApi } from '../../services/companyService';
 import CompanyForm from '../CompanyForm/CompanyForm';
+import { EditOutlined } from '@ant-design/icons';
+import { Company } from '../../../types/Company';
+import { Button, message, Modal } from 'antd';
 
-type AddCompanyButtonProps = {
+type EditCompanyButtonProps = {
     className?: string;
+    company: Company;
 };
 
-const AddCompanyButton: FC<AddCompanyButtonProps> = ({ className }) => {
-    const [addCompany, { isLoading }] = companyApi.useAddCompanyMutation();
+const EditCompanyButton: FC<EditCompanyButtonProps> = ({ className, company }) => {
+    const [changeCompany, { isLoading }] = companyApi.useChangeCompanyMutation();
     const [visible, setVisible] = useState(false);
 
     const showModal = () => {
@@ -19,19 +22,18 @@ const AddCompanyButton: FC<AddCompanyButtonProps> = ({ className }) => {
         setVisible(false);
     };
 
-    const onFinish = (values: any) => {
-        addCompany(values)
+    const onFinish = (values: any) =>
+        changeCompany({ id: company.id, name: values.name, domainName: values.domainName })
             .unwrap()
             .then(
                 () => setVisible(false),
                 (err) => message.error(err.data?.message ?? 'Произошла ошибка')
             );
-    };
 
     return (
         <>
             <Button className={className} onClick={showModal}>
-                Добавить компанию
+                <EditOutlined />
             </Button>
             <Modal
                 visible={visible}
@@ -41,14 +43,19 @@ const AddCompanyButton: FC<AddCompanyButtonProps> = ({ className }) => {
                     <Button key='back' onClick={handleCancel}>
                         Отмена
                     </Button>,
-                    <Button form='addCompany' loading={isLoading} key='submit' htmlType='submit' type='primary'>
-                        Добавить
+                    <Button form='changeCompany' loading={isLoading} key='submit' htmlType='submit' type='primary'>
+                        Сохранить
                     </Button>,
                 ]}>
-                <CompanyForm id='addCompany' onFinish={onFinish} />
+                <CompanyForm
+                    id='changeCompany'
+                    onFinish={onFinish}
+                    defaultName={company.name}
+                    defaultDomainName={company.domainName}
+                />
             </Modal>
         </>
     );
 };
 
-export default AddCompanyButton;
+export default EditCompanyButton;
