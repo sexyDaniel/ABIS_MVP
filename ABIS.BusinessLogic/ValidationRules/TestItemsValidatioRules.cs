@@ -39,7 +39,7 @@ namespace ABIS.BusinessLogic.ValidationRules
             return this;
         }
 
-        public TestItemsValidatioRules CheckRatioItem(ICollection<RatioQuestionDTO> answerDTOs)
+        public TestItemsValidatioRules CheckRatioItem(ICollection<CreateRatioQuestionDTO> answerDTOs)
         {
             foreach (var a in answerDTOs)
             {

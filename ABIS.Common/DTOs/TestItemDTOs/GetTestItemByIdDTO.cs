@@ -1,7 +1,8 @@
 ﻿
+
 namespace ABIS.Common.DTOs.TestItemDTOs
 {
-    public class GetTestItemDTO
+    public class GetTestItemByIdDTO
     {
         public int Id { get; set; }
         public string QuestionText { get; set; }

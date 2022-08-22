@@ -46,6 +46,15 @@ namespace ABIS.WebApi.Controllers
             return response;
         }
 
+        [HttpGet("test-items/{testItemId:int}")]
+        [Authorize]
+        public async Task<GetTestItemByIdDTO> GetTestItemByIdAsync(int testItemId)
+        {
+            var response = await _testItemService.GetTestItemByIdAsync(testItemId);
+
+            return response;
+        }
+
         [HttpPut("test-items/update")]
         [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateTestItemAsync([FromBody] UpdateTestItemDTO updateTestItemDTO)

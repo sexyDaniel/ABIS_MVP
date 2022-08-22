@@ -15,26 +15,18 @@ namespace ABIS.BusinessLogic.Services
             _securityService = securityService;
         }
 
-        public async Task<string> CreatePasswordToken(string email)
+        public async Task<Token[]> CreatePasswordTokens(Token[] newTokens)
         {
-            var isTokenExist = await _context.Tokens
-                .AnyAsync(t => t.Email == email);
+            var tokens = await _context.Tokens
+                .Where(t => newTokens.Select(nt=> nt.Email).Contains(t.Email))
+                .ToListAsync();
 
-            if (isTokenExist) 
-            {
-                throw new BusinessLogicException("Токен для пользователя уже есть");
-            }
+            var correctTokens = newTokens.Where(nt => !tokens.Any(t => nt.Email == t.Email));
 
-            var token = Convert.ToBase64String(_securityService.GetRandomBytes(15));
-
-            await _context.Tokens.AddAsync(new Token() 
-            {
-                Email = email, 
-                Value = token
-            });
+            await _context.Tokens.AddRangeAsync(correctTokens);
             await _context.SaveChangesAsync();
 
-            return token;
+            return correctTokens.ToArray();
         }
 
         public async Task DeletePasswordToken(string email)

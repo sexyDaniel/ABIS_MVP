@@ -4,6 +4,8 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MailKit.Security;
 using System.Web;
+using ABIS.Common.Entities;
+using ABIS.Common.Exceptions;
 
 namespace ABIS.BusinessLogic.Services
 {
@@ -42,31 +44,44 @@ namespace ABIS.BusinessLogic.Services
             await client.DisconnectAsync(true);
         }
 
-        public async Task SendEmailForPassword(string[] addressees, string redirectUrl) 
+        public async Task SendEmailForPassword(Token[] tokens, string redirectUrl) 
         {
             using var client = new SmtpClient();
 
             await client.ConnectAsync(_configuration["Email:smtpServer"], 587, SecureSocketOptions.StartTls);
             await client.AuthenticateAsync(_configuration["Email:administration"], _configuration["Email:password"]);
 
-            foreach (var adress in addressees) 
+            var invalidEmails = new List<string>();
+            foreach (var token in tokens)
             {
-                var message = new MimeMessage();
-
-                message.From.Add(new MailboxAddress("ABIS", _configuration["Email:administration"]));
-                message.To.Add(new MailboxAddress("", adress));
-
-                message.Subject = "Установка пароля";
-                var token = await _tokenService.CreatePasswordToken(adress);
-                var encodedToken = HttpUtility.UrlEncode(token);
-                var encodedEmail = HttpUtility.UrlEncode(adress);
-                message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                try
                 {
-                    Text = $"Ссылка для установки пароля: {redirectUrl}?token={encodedToken}&email={encodedEmail}"
-                };
-                await client.SendAsync(message);
+                    var message = new MimeMessage();
+
+                    message.From.Add(new MailboxAddress("ABIS", _configuration["Email:administration"]));
+                    message.To.Add(new MailboxAddress("", token.Email));
+
+                    message.Subject = "Установка пароля";
+                    var encodedToken = HttpUtility.UrlEncode(token.Value);
+                    var encodedEmail = HttpUtility.UrlEncode(token.Email);
+                    message.Body = new TextPart(MimeKit.Text.TextFormat.Html)
+                    {
+                        Text = $"Ссылка для установки пароля: {redirectUrl}?token={encodedToken}&email={encodedEmail}"
+                    };
+                    await client.SendAsync(message);
+                }
+                catch (Exception ex) 
+                {
+                    invalidEmails.Add(token.Email);
+                }
+               
             }
             await client.DisconnectAsync(true);
+
+            if (invalidEmails.Count > 0) 
+            {
+                throw new BusinessLogicException($"Не удалось отправить ссылку следующим адресам: {string.Join(" ", invalidEmails)}");
+            }
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using ABIS.BusinessLogic.ValidationRules;
 using ABIS.Common.DTOs.TheoryUnitDTOs;
 using ABIS.Common.Entities;
+using ABIS.Common.Enums;
 using ABIS.Common.Exceptions;
 using ABIS.Common.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -48,13 +49,16 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id)
+        public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id, Roles role)
         {
             var theoryUnit = await _context.TheoryUnits
+                .Include(tu => tu.CourseSubItem)
+                .Where(tu => 
+                (tu.CourseSubItem.Course.CourseStatus == CourseStatus.Publish && role != Roles.SuperAdmin) 
+                || role == Roles.SuperAdmin)
                 .Select(tu => new GetTheoruUnitByIdDTO()
                 {
                     Id = tu.Id,
-                    Number = tu.Id,
                     Title = tu.Title,
                     CourseSubItemId = tu.CourseSubItemId,
                     Body = tu.Body

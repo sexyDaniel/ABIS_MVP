@@ -61,6 +61,16 @@ namespace ABIS.BusinessLogic.Services
             return testUnit;
         }
 
+        public async Task<ICollection<int>> GetTestUnitItems(int testUnitId)
+        {
+            var testItems = await _context.TestItems
+                .Select(ti => new { ti.Id, ti.TestUnitId })
+                .Where(ti => ti.TestUnitId == testUnitId)
+                .ToListAsync();
+
+            return testItems.Select(ti => ti.Id).ToList();
+        }
+
         public async Task UpdateTestUnit(UpdateTestUnitDTO updateTestUnitDTO)
         {
             var validationErrors = new StructuralUnitValidationRules()

@@ -75,7 +75,16 @@ namespace ABIS.WebApi.Controllers
         [HttpGet("courses/{id:int}/for-super-admin")]
         public async Task<GetCourseByIdDTO> GetCourseForSuperUserAsync(int id)
         {
-            var response = await _courseService.GetCourseById(id);
+            var response = await _courseService.GetCourseByIdForSuperAdmin(id);
+
+            return response;
+        }
+
+        [Authorize(Roles = "User")]
+        [HttpGet("courses/{id:int}/for-user")]
+        public async Task<GetCourseByIdForUser> GetCourseForUserAsync(int id)
+        {
+            var response = await _courseService.GetCourseByIdForUserAsync(id, UserId);
 
             return response;
         }

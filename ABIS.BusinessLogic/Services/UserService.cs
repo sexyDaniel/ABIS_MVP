@@ -36,19 +36,36 @@ namespace ABIS.BusinessLogic.Services
                 throw new NotFoundException("Токен не найден");
             }
 
-            var user = await _context.Users
-                .SingleOrDefaultAsync(u => u.Email == decodedEmail);
+            var company = await _context.Companies
+                .SingleOrDefaultAsync(c => c.Id == token.CompanyId);
 
-            if (user == null) 
+            if (company == null)
             {
-                throw new NotFoundException("Пользователь не найден");
+                throw new NotFoundException("Компания не найдена");
+            }
+
+            var isUserExists = await _context.Users
+                .AnyAsync(u => u.Email == decodedEmail);
+
+            if (isUserExists) 
+            {
+                await _tokenService.DeletePasswordToken(decodedEmail);
+                throw new NotFoundException("Пользователь уже есть");
             }
             var salt = _securityService.GetRandomBytes(32);
             var passwordHash = _securityService.GetPasswordHash(passwordDTO.Password, salt);
 
-            user.PasswordHash = passwordHash;
-            user.Salt = Convert.ToBase64String(salt);
+            var user = new User()
+            {
+                PasswordHash = passwordHash,
+                Salt = Convert.ToBase64String(salt),
+                Role = token.Role,
+                Email = decodedEmail,
+            };
 
+            company.Users.Add(user);
+
+            await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             await _tokenService.DeletePasswordToken(decodedEmail);
 
@@ -77,28 +94,26 @@ namespace ABIS.BusinessLogic.Services
                 throw new NotFoundException($"Такой компании не существует");
             }
 
-            var isUserExist = await _context.Users
-                .Select(u => u.Email)
-                .AnyAsync(u => u == userDTO.Email);
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Email == userDTO.Email);
 
-            if (isUserExist)
+            if (user != null)
             {
-                throw new BusinessLogicException($"Такой пользователь уже существует");
+                await AddUsersToCompany(new User[] { user }, company);
+                return;
             }
 
-            var user = new User()
+            var token = new Token()
             {
                 Email = userDTO.Email,
                 Role = userDTO.Role,
+                CompanyId = userDTO.CompanyId,
+                Value = Convert.ToBase64String(_securityService.GetRandomBytes(15))
             };
 
-            user.Companies.Add(company);
-
-            await _context.Users.AddAsync(user);
-            await _context.SaveChangesAsync();
-
+            await _tokenService.CreatePasswordTokens(new Token[] { token});
             await _emailService.SendEmailForPassword(
-                new string[] { userDTO.Email },
+                new Token[] { token },
                 userDTO.PasswordSavedLink);
         }
 
@@ -124,33 +139,29 @@ namespace ABIS.BusinessLogic.Services
             }
 
             var existsUsers = await _context.Users
-                .Select(u => u.Email)
-                .Where(u => usersDTO.Emails.Contains(u))
+                .Where(u => usersDTO.Emails.Contains(u.Email))
                 .ToListAsync();
 
             if (existsUsers.Count > 0) 
             {
-                throw new BusinessLogicException($"Следующие пользователи уже существуют: {string.Join(" ", existsUsers)}");
+                await AddUsersToCompany(existsUsers, company);
             }
 
-            var users = usersDTO.Emails
-                .Select(dto => 
+            var tokens = usersDTO.Emails
+                .Where(e => !existsUsers.Any(u => u.Email == e))
+                .Select(e => new Token()
                 {
-                    var user = new User()
-                    {
-                        Email = dto,
-                        Role = Roles.User,
-                    };
-                    user.Companies.Add(company);
+                    Email = e,
+                    Role = Roles.User,
+                    CompanyId = usersDTO.CompanyId,
+                    Value = Convert.ToBase64String(_securityService.GetRandomBytes(15))
+                }).ToArray();
 
-                    return user;
-                });
-
-            await _context.Users.AddRangeAsync(users);
+            var correctTokens = await _tokenService.CreatePasswordTokens(tokens);
             await _context.SaveChangesAsync();
 
             await _emailService.SendEmailForPassword(
-                usersDTO.Emails.ToArray(), 
+                correctTokens,
                 usersDTO.PasswordSavedLink);
         }
 
@@ -189,6 +200,19 @@ namespace ABIS.BusinessLogic.Services
             user.Email = updateUserDTO.Email;
             user.FirstName = updateUserDTO.FirstName;
             user.LastName = updateUserDTO.LastName;
+
+            await _context.SaveChangesAsync();
+        }
+
+        private async Task AddUsersToCompany(ICollection<User> users, Company company) 
+        {
+            foreach (var u in users) 
+            {
+                if (!company.Users.Any(user => user.Id == u.Id)) 
+                {
+                    company.Users.Add(u);
+                }
+            }
 
             await _context.SaveChangesAsync();
         }

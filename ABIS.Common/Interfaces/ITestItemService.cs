@@ -10,5 +10,6 @@ namespace ABIS.Common.Interfaces
         Task DeleteTestItemAsync(int testItemId);
         Task UpdateTestItemAsync(UpdateTestItemDTO updateTestItem);
         Task<ICollection<GetTestItemDTO>> GetTestItemsAsync(int testUnitId);
+        Task<GetTestItemByIdDTO> GetTestItemByIdAsync(int testItemId);
     }
 }

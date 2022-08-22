@@ -7,5 +7,6 @@ public interface ITestUnitService
     Task CreateTestUnit(CreateTestUnitDTO createTestUnitDTO);
     Task UpdateTestUnit(UpdateTestUnitDTO updateTestUnitDTO);
     Task<GetTestUnitByIdDTO> GetTestUnitById(int id);
+    Task<ICollection<int>> GetTestUnitItems(int testUnitId);
 }
 

@@ -4,6 +4,7 @@ using ABIS.Persistence.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ABIS.Persistence.Migrations
 {
     [DbContext(typeof(SqlServerDbContext))]
-    partial class SqlServerDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220820175008_Add_new_fields_in_Token")]
+    partial class Add_new_fields_in_Token
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,17 +297,12 @@ namespace ABIS.Persistence.Migrations
                     b.Property<int>("TestItemId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TestUnitId")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TestItemId");
-
-                    b.HasIndex("TestUnitId");
 
                     b.HasIndex("UserId");
 
@@ -535,12 +532,6 @@ namespace ABIS.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("ABIS.Common.Entities.TestUnit", "TestUnit")
-                        .WithMany("Statistics")
-                        .HasForeignKey("TestUnitId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("ABIS.Common.Entities.User", "User")
                         .WithMany("TestStatistics")
                         .HasForeignKey("UserId")
@@ -548,8 +539,6 @@ namespace ABIS.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("TestItem");
-
-                    b.Navigation("TestUnit");
 
                     b.Navigation("User");
                 });
@@ -627,8 +616,6 @@ namespace ABIS.Persistence.Migrations
 
             modelBuilder.Entity("ABIS.Common.Entities.TestUnit", b =>
                 {
-                    b.Navigation("Statistics");
-
                     b.Navigation("TestItems");
                 });
 #pragma warning restore 612, 618

@@ -94,13 +94,50 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<GetCourseByIdDTO> GetCourseById(int id)
+        public async Task<GetCourseByIdDTO> GetCourseByIdForSuperAdmin(int id)
         {
             var course = await _context.Courses
                 .Include(c => c.CourseSubItem.OrderByDescending(v=>v.Number))
                 .ThenInclude(csi => csi.StructuralUnits.OrderBy(v => v.Title))
                 .ProjectTo<GetCourseByIdDTO>(_mapper.ConfigurationProvider)
                 .SingleOrDefaultAsync(c => c.CourseId == id);
+
+            return course;
+        }
+
+        public async Task<GetCourseByIdForUser> GetCourseByIdForUserAsync(int courseId, Guid? userId)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Users)
+                .Include(c => c.CourseSubItem)
+                .ThenInclude(csi => csi.StructuralUnits)
+                .ThenInclude(su => su.Progresses)
+                .Select(c => new GetCourseByIdForUser() 
+                {
+                    CourseId = c.Id,
+                    Image = c.Image,
+                    IsUserInCourse = c.Users.Any(u => u.Id==userId),
+                    Description = c.Discription,
+                    Status = c.CourseStatus,
+                    Title = c.Title,
+                    SubItems = c.CourseSubItem.Select(csi => new SubItemForUserDTO() 
+                    {
+                        Id = csi.Id,
+                        Title = csi.Title,
+                        Description = csi.Discription,
+                        Units = csi.StructuralUnits.Select(su=>new UnitForUserDTO() 
+                        {
+                            Id = su.Id,
+                            IsComplete = su.Progresses.Any(p => p.UserId == userId),
+                            Title = su.Title,
+                            Type = su is TheoryUnit ? "Theory" : "Test"
+                        }).ToList()
+                    }).ToList()
+                })
+                .SingleOrDefaultAsync(c => c.CourseId == courseId && c.Status == CourseStatus.Publish);
+
+                //.ProjectTo<GetCourseByIdForUser>(_mapper.ConfigurationProvider)
+                
 
             return course;
         }

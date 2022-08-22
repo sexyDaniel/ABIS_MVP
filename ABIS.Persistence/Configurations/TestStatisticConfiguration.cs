@@ -19,5 +19,10 @@ public class TestStatisticConfiguration : IEntityTypeConfiguration<TestStatistic
             .WithMany(ti => ti.TestStatistics)
             .HasForeignKey(ts => ts.TestItemId)
             .IsRequired();
+
+        builder.HasOne(ts => ts.TestUnit)
+            .WithMany(ti => ti.Statistics)
+            .HasForeignKey(ts => ts.TestUnitId)
+            .IsRequired();
     }
 }

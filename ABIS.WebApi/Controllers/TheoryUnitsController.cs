@@ -1,4 +1,5 @@
 ﻿using ABIS.Common.DTOs.TheoryUnitDTOs;
+using ABIS.Common.Enums;
 using ABIS.Common.Interfaces;
 using ABIS.WebApi.Filters;
 using Microsoft.AspNetCore.Authorization;
@@ -37,7 +38,16 @@ namespace ABIS.WebApi.Controllers
         [Authorize(Roles = "SuperAdmin")]
         public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdAsync(int id)
         {
-            var response = await _theoryUnitService.GetTheoryUnitByIdAsync(id);
+            var response = await _theoryUnitService.GetTheoryUnitByIdAsync(id, Roles.SuperAdmin);
+
+            return response;
+        }
+
+        [HttpGet("theory-units/{id:int}/for-user")]
+        [Authorize(Roles = "User,Admin")]
+        public async Task<GetTheoruUnitByIdDTO> GetTheoryUnitByIdForUserAsync(int id)
+        {
+            var response = await _theoryUnitService.GetTheoryUnitByIdAsync(id, Roles.User);
 
             return response;
         }

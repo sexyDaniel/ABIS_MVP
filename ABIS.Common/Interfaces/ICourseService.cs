@@ -4,7 +4,8 @@ namespace ABIS.Common.Interfaces
 {
     public interface ICourseService
     {
-        Task<GetCourseByIdDTO> GetCourseById(int id);
+        Task<GetCourseByIdForUser> GetCourseByIdForUserAsync(int courseId, Guid? userId);
+        Task<GetCourseByIdDTO> GetCourseByIdForSuperAdmin(int id);
         Task<ICollection<GetCourseDTO>> GetCoursesAsync(bool isSuperAdmin = false);
         Task CreateCourseAsync(CreateCourseDTO courseDTO);
         Task ChangeCourseStatus(int id);

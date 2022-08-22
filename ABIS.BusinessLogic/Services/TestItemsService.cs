@@ -116,6 +116,73 @@ namespace ABIS.BusinessLogic.Services
             await _context.SaveChangesAsync();
         }
 
+        public async Task<GetTestItemByIdDTO> GetTestItemByIdAsync(int testItemId)
+        {
+            var testItem = await _context.TestItems
+                .Include(ti => ti.Answers)
+                .Include(ti => ti.RatioAnswers)
+                .Include(ti => ti.RatioQuestions)
+                .SingleOrDefaultAsync(ti => ti.Id == testItemId);
+
+            if (testItem == null) 
+            {
+                return null;
+            }
+
+            GetTestItemByIdDTO testItemDTO = null;
+
+            switch (testItem.ItemType) 
+            {
+                case TestItemTypes.Correlate: 
+                    {
+                        testItemDTO = new GetRatioTestItemByIdDTO()
+                        {
+                            Id = testItem.Id,
+                            QuestionText = testItem.QuestionText,
+                            ItemType = testItem.ItemType.ToString(),
+                            RatioQuestions = testItem.RatioQuestions.Select(rq => new RatioQuestionDTO()
+                            {
+                                QuestionText = rq.QuestionText,
+                                Id = rq.Id
+                            }).ToList(),
+                            RatioAnswers = testItem.RatioAnswers.Select(rq => new RatioAnswerDTO()
+                            {
+                                AnswerText = rq.AnswerText,
+                                Id = rq.Id
+                            }).ToList()
+                        };
+                        break;
+                    }
+                case TestItemTypes.OpenAnswer:
+                    {
+                        testItemDTO = new GetTestItemByIdDTO()
+                        {
+                            Id = testItem.Id,
+                            QuestionText = testItem.QuestionText,
+                            ItemType = testItem.ItemType.ToString(),
+                        };
+                        break;
+                    }
+                default:
+                    {
+                        testItemDTO = new GetAnotherTestItemByIdDTO()
+                        {
+                            Id = testItem.Id,
+                            QuestionText = testItem.QuestionText,
+                            ItemType = testItem.ItemType.ToString(),
+                            AnswerDTOs = testItem.Answers.Select(rq => new AnswerDTO()
+                            {
+                                Text = rq.AnswerText,
+                                Id = rq.Id
+                            }).ToList(),
+                        };
+                        break;
+                    }
+            }
+
+            return testItemDTO;
+        }
+
         public async Task<ICollection<GetTestItemDTO>> GetTestItemsAsync(int testUnitId)
         {
             IEnumerable<GetTestItemDTO> ratioTestItems = await _context.TestItems

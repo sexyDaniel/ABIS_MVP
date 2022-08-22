@@ -34,6 +34,14 @@ namespace ABIS.WebApi.Controllers
             return response;
         }
 
+        [HttpGet("test-units/{testUnitId:int}/test-items")]
+        [Authorize]
+        public async Task<ICollection<int>> GetTestUnitItemsAsync(int testUnitId)
+        {
+            var response = await _testUnitService.GetTestUnitItems(testUnitId);
+            return response;
+        }
+
         [HttpPut("test-units/{id:int}/update")]
         [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UpdateTestUnitAsync(UpdateTestUnitDTO updateTestUnitDTO)

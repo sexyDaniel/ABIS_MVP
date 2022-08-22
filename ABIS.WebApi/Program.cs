@@ -32,6 +32,7 @@ builder.Services.AddTransient<ICompanyService, CompanyService>();
 builder.Services.AddTransient<ITestItemService, TestItemsService>();
 builder.Services.AddTransient<IAnswerService, AnswersService>();
 builder.Services.AddTransient<IRatioQuestionsService, RatioQuestionsService>();
+builder.Services.AddTransient<IStatisticsService, StatisticsService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling =
@@ -42,6 +43,7 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.UseCors("AllowAll");
