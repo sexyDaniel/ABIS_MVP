@@ -1,5 +1,6 @@
 .header {
-    background-color: var(--bg-color);
+    background: var(--bg-color) !important;
+    border-bottom: 1px solid var(--accent-color);
 }
 .logo {
     display: flex;
@@ -23,7 +24,6 @@
     cursor: pointer;
 }
 .menu {
-    margin-top: 20px;
     background-color: var(--bg-color);
     overflow: hidden;
 }

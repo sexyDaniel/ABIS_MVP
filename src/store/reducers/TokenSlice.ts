@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { commonApi } from '../../services/commonService';
+import { CompaniesSlice } from './CompaniesSlice';
 import { AppDispatch } from '../store';
 import { UserSlice } from './UserSlice';
 
@@ -32,6 +33,7 @@ export const setToken = (token: string) => (dispatch: AppDispatch) => {
 export const clearToken = () => (dispatch: AppDispatch) => {
     dispatch(TokenSlice.actions.clearToken());
     dispatch(UserSlice.actions.clearUser());
+    dispatch(CompaniesSlice.actions.clearCompanies());
     dispatch(commonApi.util.resetApiState());
     localStorage.removeItem('accessToken');
 };

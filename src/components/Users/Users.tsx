@@ -1,5 +1,6 @@
+import { companyApi } from '../../services/companyService';
 import AddUserButton from '../AddUserButton/AddUserButton';
-import { Button, Select, Table, Typography } from 'antd';
+import { Select, Space, Spin, Table, Typography } from 'antd';
 import { ColumnsType } from 'antd/lib/table';
 import React, { FC, useState } from 'react';
 
@@ -16,23 +17,6 @@ interface DataType {
     perfomance: string;
     status: string;
 }
-
-const data: DataType[] = [
-    {
-        key: 1,
-        fio: 'Иван Иванов',
-        email: 'имя@ddawd',
-        perfomance: '-',
-        status: '-',
-    },
-    {
-        key: 2,
-        fio: 'Влад Сидоров',
-        email: 'имя@ddawd',
-        perfomance: '-',
-        status: 'в процессе обучения',
-    },
-];
 
 const columns: ColumnsType<DataType> = [
     {
@@ -54,7 +38,12 @@ const columns: ColumnsType<DataType> = [
 ];
 
 const Users: FC<UsersProps> = () => {
+    const { data: companies, isLoading } = companyApi.useGetCompaniesQuery();
     const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+    const [selectedCompany, setSelectedCompany] = useState<number | null>(null);
+    const { data: users, isLoading: usersIsLoading } = companyApi.useGetUsersQuery(selectedCompany!, {
+        skip: !selectedCompany,
+    });
 
     const onSelectChange = (newSelectedRowKeys: React.Key[]) => setSelectedRowKeys(newSelectedRowKeys);
 
@@ -64,22 +53,68 @@ const Users: FC<UsersProps> = () => {
     };
     const hasSelected = selectedRowKeys.length > 0;
 
+    const onChange = (id: any) => setSelectedCompany(id);
+
+    if (isLoading) {
+        return (
+            <div className={styles.wrapper}>
+                <Spin />
+            </div>
+        );
+    }
+
+    if (companies?.length === 0) {
+        return (
+            <div className={styles.wrapper}>
+                <Typography className={styles.title}>
+                    Для добавления пользователей добавьте компанию во вкладке "Компания"
+                </Typography>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.wrapper}>
-            <Typography className={styles.title}>
-                Вы можете управлять пользователями: добавлять и удалять их, назначать, приостанавливать и возобновлять
-                обучение.
-            </Typography>
-            <div className={styles.actions}>
-                <Select className={styles.select} disabled={!hasSelected} placeholder='Выберите действие' allowClear>
-                    <Select.Option value='1'>Удалить</Select.Option>
-                    <Select.Option value='2'>Остановить обучение</Select.Option>
-                    <Select.Option value='3'>Назначить обучение</Select.Option>
-                    <Select.Option value='4'>Отправить приглашение на обучение</Select.Option>
-                </Select>
-                <AddUserButton />
-            </div>
-            <Table rowSelection={rowSelection} columns={columns} dataSource={data} />
+            <Typography className={styles.space}>Вы можете добавлять и удалять пользователей.</Typography>
+            {companies && (
+                <Space className={styles.space} size={20}>
+                    <Typography>Компания:</Typography>
+                    <Select className={styles.select} placeholder='Выберите компанию' allowClear onChange={onChange}>
+                        {companies.map(({ id, name }) => (
+                            <Select.Option key={id} value={id}>
+                                {name}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Space>
+            )}
+            {selectedCompany && (
+                <>
+                    <div className={styles.actions}>
+                        <Select className={styles.select} disabled placeholder='Выберите действие' allowClear>
+                            <Select.Option value='1'>Удалить</Select.Option>
+                            <Select.Option value='2'>Остановить обучение</Select.Option>
+                            <Select.Option value='3'>Назначить обучение</Select.Option>
+                            <Select.Option value='4'>Отправить приглашение на обучение</Select.Option>
+                        </Select>
+                        <AddUserButton companyId={selectedCompany} />
+                    </div>
+                    {usersIsLoading && <Spin />}
+                    {users && (
+                        <Table
+                            rowSelection={rowSelection}
+                            columns={columns}
+                            dataSource={users.map(({ id, lastName, firstName, email }) => ({
+                                key: id!,
+                                fio: `${lastName ?? 'Фамилия'} ${firstName ?? 'Имя'}`,
+                                email: email,
+                                perfomance: '-',
+                                status: '-',
+                            }))}
+                        />
+                    )}
+                </>
+            )}
         </div>
     );
 };

@@ -1,11 +1,10 @@
 import { DownOutlined, SafetyOutlined, ProfileOutlined, LogoutOutlined } from '@ant-design/icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { clearToken } from '../../store/reducers/TokenSlice';
-import Container from '../Container/Container';
+import { Dropdown, Layout, Typography } from 'antd';
 import { Link } from 'react-router-dom';
 import classNames from 'classnames';
 import React, { FC } from 'react';
-import { Dropdown } from 'antd';
 
 import styles from './Header.module.scss';
 
@@ -22,11 +21,11 @@ const Header: FC<HeaderProps> = ({ className }) => {
     const classes = classNames(className, styles.header);
 
     return (
-        <header className={classes}>
-            <Container className={styles.container}>
+        <Layout.Header className={classes}>
+            <div className={styles.container}>
                 <div className={styles.logo}>
                     <SafetyOutlined />
-                    АК Барс ИБ
+                    <Typography>Ак Барс ИБ</Typography>
                 </div>
                 {user && (
                     <Dropdown
@@ -49,13 +48,13 @@ const Header: FC<HeaderProps> = ({ className }) => {
                         }
                         trigger={['click']}>
                         <div className={styles.dropdown}>
-                            {user.lastName} {user.firstName}
+                            {user.lastName ?? 'Фамилия'} {user.firstName ?? 'Имя'}
                             <DownOutlined />
                         </div>
                     </Dropdown>
                 )}
-            </Container>
-        </header>
+            </div>
+        </Layout.Header>
     );
 };
 

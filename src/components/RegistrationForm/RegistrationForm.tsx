@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
-import { Button, Form, Input, Select, Typography } from 'antd';
+import { Button, Form, Input, message, Select, Typography } from 'antd';
 import { setToken } from '../../store/reducers/TokenSlice';
 import { LOGIN_ROUTE, PROFILE_ROUTE } from '../../routes';
 import { authAPI } from '../../services/authService';
@@ -15,14 +15,17 @@ type RegistrationFormProps = {
 const RegistrationForm: FC<RegistrationFormProps> = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const { accessToken } = useAppSelector((state) => state.token);
+    const { user } = useAppSelector((state) => state.user);
     const [registrate, { data, isLoading }] = authAPI.useRegistrationMutation();
 
-    const onFinish = (values: any) => registrate(values);
+    const onFinish = (values: any) =>
+        registrate(values)
+            .unwrap()
+            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
     useEffect(() => {
-        if (accessToken) navigate(PROFILE_ROUTE);
-    }, [accessToken, navigate]);
+        if (user) navigate(PROFILE_ROUTE);
+    }, [user, navigate]);
 
     useEffect(() => {
         if (data) dispatch(setToken(data.accessToken));

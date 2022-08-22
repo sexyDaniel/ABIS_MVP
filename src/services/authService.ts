@@ -31,5 +31,20 @@ export const authAPI = commonApi.enhanceEndpoints({ addTagTypes: ['User'] }).inj
                 body: data,
             }),
         }),
+        update: builder.mutation<void, { email: string; firstName: string; lastName: string }>({
+            query: (data) => ({
+                url: '/api/users/update',
+                method: 'PUT',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
+        delete: builder.mutation<void, string>({
+            query: (id) => ({
+                url: `/api/users/${id}/delete`,
+                method: 'DELETE',
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });

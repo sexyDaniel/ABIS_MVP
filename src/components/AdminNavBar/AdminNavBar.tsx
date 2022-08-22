@@ -1,33 +1,28 @@
-import { DASHBOARD_ROUTE, USERS_ROUTE } from '../../routes';
-import { NavLink } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ItemType } from 'antd/lib/menu/hooks/useItems';
+import { MenuInfo } from 'rc-menu/lib/interface';
+import { NavItem } from '../../const';
 import React, { FC } from 'react';
-import { Space } from 'antd';
-
-import styles from './AdminNavBar.module.scss';
-import Container from '../Container/Container';
+import { Menu } from 'antd';
+import MenuItem from 'antd/lib/menu/MenuItem';
 
 type AdminNavBarProps = {
     className?: string;
+    links: NavItem[];
 };
 
-const AdminNavBar: FC<AdminNavBarProps> = () => {
+const AdminNavBar: FC<AdminNavBarProps> = ({ className, links }) => {
+    const navigate = useNavigate();
+    const onClick = (item: MenuInfo) => navigate(item.key);
+    const selectedKey = useLocation().pathname;
+
     return (
-        <nav className={styles.nav}>
-            <Container>
-                <ul className={styles.list}>
-                    <li>
-                        <NavLink className={styles.item} to={DASHBOARD_ROUTE}>
-                            Контрольная панель
-                        </NavLink>
-                    </li>
-                    <li>
-                        <NavLink className={styles.item} to={USERS_ROUTE}>
-                            Пользователи
-                        </NavLink>
-                    </li>
-                </ul>
-            </Container>
-        </nav>
+        <Menu
+            mode='inline'
+            selectedKeys={[selectedKey]}
+            onClick={onClick}
+            items={links.map(({ path, label, Icon }) => ({ key: path, label, icon: <Icon /> }))}
+        />
     );
 };
 

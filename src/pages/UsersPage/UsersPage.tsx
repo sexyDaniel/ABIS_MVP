@@ -1,16 +1,13 @@
-import { Typography } from 'antd';
-import React, { FC } from 'react';
-import Container from '../../components/Container/Container';
+import Title from '../../components/Title/Title';
 import Users from '../../components/Users/Users';
-
-import styles from './UsersPage.module.scss';
+import React, { FC } from 'react';
 
 const UsersPage: FC = () => {
     return (
-        <Container>
-            <Typography className={styles.title}>Пользователи</Typography>
+        <>
+            <Title>Пользователи</Title>
             <Users />
-        </Container>
+        </>
     );
 };
 

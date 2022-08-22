@@ -7,4 +7,5 @@ export type User = {
     firstName: string;
     lastName: string;
     role: Role | 'User' | 'Admin' | 'SuperAdmin';
+    isCompanyExists: boolean;
 };

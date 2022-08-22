@@ -1,10 +1,11 @@
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../hooks/redux';
 import { PROFILE_ROUTE, REGISTRATION_ROUTE } from '../../routes';
 import { setToken } from '../../store/reducers/TokenSlice';
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Form, Input, message, Typography } from 'antd';
 import React, { FC, useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { authAPI } from '../../services/authService';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 
 import styles from './LoginForm.module.scss';
 
@@ -15,60 +16,30 @@ type LoginFormProps = {
 const LoginForm: FC<LoginFormProps> = () => {
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const [searchParams] = useSearchParams();
-    const params = {
-        email: searchParams.get('email'),
-        token: searchParams.get('token'),
-    };
-    const { accessToken } = useAppSelector((state) => state.token);
+
+    const { user } = useAppSelector((state) => state.user);
     const [login, { data: loginData, isLoading: loginIsLoading }] = authAPI.useLoginMutation();
-    const [setPassword, { data: setPasswordData, isLoading: setPasswordIsLoading }] = authAPI.useSetPasswordMutation();
 
     const [email, setEmail] = useState('');
-    const { data, isLoading } = authAPI.useCheckEmailQuery({ email }, { skip: !email });
+    const { data, isLoading, isError } = authAPI.useCheckEmailQuery({ email }, { skip: !email });
 
     const onEmailFinish = (values: any) => setEmail(values.email);
-    const onPasswordFinish = (values: any) => login({ email, password: values.password });
-    const onSetPasswordFinish = (values: any) =>
-        setPassword({ password: values.password, email: params.email!, token: params.token! });
+    const onPasswordFinish = (values: any) =>
+        login({ email, password: values.password })
+            .unwrap()
+            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
     useEffect(() => {
-        if (accessToken) navigate(PROFILE_ROUTE);
-    }, [accessToken, navigate]);
+        if (user) navigate(PROFILE_ROUTE);
+    }, [user, navigate]);
 
     useEffect(() => {
         if (loginData) dispatch(setToken(loginData.accessToken));
-        if (setPasswordData) dispatch(setToken(setPasswordData.accessToken));
-    }, [loginData, setPasswordData, dispatch]);
+    }, [loginData, dispatch]);
 
-    if (params.email && params.token) {
-        return (
-            <>
-                <Typography>Установите пароль для {params.email}</Typography>
-                <br />
-                <Form
-                    name='basic'
-                    initialValues={{ remember: true }}
-                    layout='vertical'
-                    onFinish={onSetPasswordFinish}
-                    autoComplete='off'>
-                    <Form.Item
-                        label='Пароль'
-                        name='password'
-                        rules={[{ required: true, message: 'Пожалуйста введите пароль' }]}>
-                        <Input.Password />
-                    </Form.Item>
-                    <Form.Item>
-                        <Button loading={setPasswordIsLoading} type='primary' htmlType='submit'>
-                            Войти
-                        </Button>
-                    </Form.Item>
-                </Form>
-            </>
-        );
-    }
+    const backToEmail = () => setEmail('');
 
-    if (!email || isLoading) {
+    if (!email || isLoading || isError) {
         return (
             <>
                 <Form
@@ -120,6 +91,10 @@ const LoginForm: FC<LoginFormProps> = () => {
                     <Input.Password />
                 </Form.Item>
                 <Form.Item>
+                    <Button onClick={backToEmail}>
+                        <ArrowLeftOutlined />
+                    </Button>
+
                     <Button loading={loginIsLoading} type='primary' htmlType='submit'>
                         Войти
                     </Button>

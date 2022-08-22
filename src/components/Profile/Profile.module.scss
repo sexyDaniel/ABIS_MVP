@@ -1,0 +1,17 @@
+.wrapper {
+    background-color: var(--bg-color);
+    padding: 30px;
+    padding-top: 40px;
+    height: 100%;
+}
+.formWrapper {
+    display: flex;
+    gap: 20px;
+    & > div {
+        flex: 0 0 calc(40% - 10px);
+    }
+}
+.btn {
+    margin-left: auto;
+    display: block !important;
+}
