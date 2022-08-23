@@ -16,6 +16,7 @@ export const EDIT_COURSE_ROUTE = '/admin/course';
 export const EDIT_UNIT_ROUTE = '/admin/unit';
 
 export const COURSES_ROUTE = '/courses';
+export const MY_COURSES_ROUTE = '/my-courses';
 export const COURSE_ROUTE = '/course';
 
 type Route = {
@@ -44,6 +45,11 @@ export const userRoutes: Routes = {
         {
             path: `${COURSE_ROUTE}/:id`,
             Component: React.lazy(() => import('./components/Course/Course')),
+        },
+        {
+            path: `${MY_COURSES_ROUTE}`,
+            Component: React.lazy(() => import('./components/MyCourses/MyCourses')),
+            title: 'Мои курсы',
         },
     ],
     defaultPath: PROFILE_ROUTE,

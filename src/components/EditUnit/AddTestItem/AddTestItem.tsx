@@ -2,8 +2,8 @@ import { Button, Checkbox, Form, Input, message, Radio, RadioChangeEvent, Space,
 import TextArea from 'antd/lib/input/TextArea';
 import React, { FC, useState } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
-import { TestItemType } from '../../../types/TestItem';
-import { courceApi } from '../../../services/courseService';
+import { TestItemType } from '../../../types/AdminTestItem';
+import { courseApi } from '../../../services/courseService';
 
 import styles from '../EditUnit.module.scss';
 
@@ -23,8 +23,8 @@ const AddTestItem: FC<AddTestItemProps> = ({ testUnitId }) => {
         { id: number; isRight: boolean; answerText: string; rightAnswerText: string }[]
     >([]);
 
-    const [addTestItem, { isLoading: addIsLoading }] = courceApi.useAddTestItemMutation();
-    const [addRatioTestItem, { isLoading: addRatioIsLoading }] = courceApi.useAddRatioTestItemMutation();
+    const [addTestItem, { isLoading: addIsLoading }] = courseApi.useAddTestItemMutation();
+    const [addRatioTestItem, { isLoading: addRatioIsLoading }] = courseApi.useAddRatioTestItemMutation();
 
     const clear = () => {
         setAnswers([]);

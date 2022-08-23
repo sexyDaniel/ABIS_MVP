@@ -3,17 +3,17 @@ import React, { FC, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
 
 import styles from './EditTestItem.module.scss';
-import { courceApi } from '../../services/courseService';
-import { TestItem } from '../../types/TestItem';
+import { courseApi } from '../../services/courseService';
+import { AdminTestItem } from '../../types/AdminTestItem';
 
 type EditTestItemProps = {
     className?: string;
-    testItem: TestItem;
+    testItem: AdminTestItem;
 };
 
 const EditTestItemButton: FC<EditTestItemProps> = ({ className, testItem }) => {
     const [visible, setVisible] = useState(false);
-    const [updateItem, { isLoading }] = courceApi.useChangeTestItemMutation();
+    const [updateItem, { isLoading }] = courseApi.useChangeTestItemMutation();
 
     const showModal = () => {
         setVisible(true);

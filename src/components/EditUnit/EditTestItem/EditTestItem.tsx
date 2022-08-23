@@ -2,23 +2,23 @@ import { Button, Checkbox, List, message, Radio, Space, Typography } from 'antd'
 import EditAnswerButton from '../EditAnswerButton';
 import { answerAPI } from '../../../services/answerService';
 import AddAnswerButton from '../AddAnswerButton';
-import { courceApi } from '../../../services/courseService';
+import { courseApi } from '../../../services/courseService';
 import EditTestItemButton from '../EditTestItemButton';
 import React, { FC } from 'react';
-import { TestItem } from '../../../types/TestItem';
+import { AdminTestItem } from '../../../types/AdminTestItem';
 import { DeleteOutlined } from '@ant-design/icons';
 
 import styles from '../EditUnit.module.scss';
 
 type EditTestItemProps = {
     className?: string;
-    testItem: TestItem;
+    testItem: AdminTestItem;
 };
 
 const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
     const [deleteAnswer] = answerAPI.useDeleteAnswerMutation();
     const [changeAnswer] = answerAPI.useChangeAnswerMutation();
-    const [deleteItem] = courceApi.useDeleteTestItemMutation();
+    const [deleteItem] = courseApi.useDeleteTestItemMutation();
 
     const onDelete = (id: number) => () => {
         message.loading({ content: 'Загрузка', key: id });

@@ -5,11 +5,11 @@ import { ADMIN_COURSE_ROUTE, EDIT_UNIT_ROUTE } from '../../routes';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { useNavigate, useParams } from 'react-router-dom';
-import { courceApi } from '../../services/courseService';
+import { courseApi } from '../../services/courseService';
 import React, { FC, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 
 import styles from './EditCourse.module.scss';
+import Markdown from '../Markdown/Markdown';
 
 type EditCourseProps = {
     className?: string;
@@ -21,11 +21,11 @@ const EditCourse: FC<EditCourseProps> = () => {
     const [markdownShow, setMarkdownShow] = useState(false);
     const textarea = useRef<TextAreaRef>(null);
 
-    const [addCourse, { isLoading }] = courceApi.useAddCourseMutation();
-    const [updateCourse, { isLoading: updIsLoading }] = courceApi.useChangeCourseMutation();
-    const [addTheoryUnit, { isLoading: addTheoryIsLoading }] = courceApi.useAddTheoryUnitMutation();
-    const [addTestUnit, { isLoading: addTestIsLoading }] = courceApi.useAddTestUnitMutation();
-    const { data: course, isLoading: CourseIsLoading } = courceApi.useGetCourseQuery(Number(id), {
+    const [addCourse, { isLoading }] = courseApi.useAddCourseMutation();
+    const [updateCourse, { isLoading: updIsLoading }] = courseApi.useChangeCourseMutation();
+    const [addTheoryUnit, { isLoading: addTheoryIsLoading }] = courseApi.useAddTheoryUnitMutation();
+    const [addTestUnit, { isLoading: addTestIsLoading }] = courseApi.useAddTestUnitMutation();
+    const { data: course, isLoading: CourseIsLoading } = courseApi.useGetAdminCourseQuery(Number(id), {
         skip: id === 'create',
     });
 
@@ -93,12 +93,7 @@ const EditCourse: FC<EditCourseProps> = () => {
                     rules={[{ required: true, message: 'Пожалуйста введите описание' }]}>
                     <TextArea ref={textarea} />
                 </Form.Item>
-                {markdownShow && (
-                    <ReactMarkdown
-                        className={`markdown-body ${styles.space}`}
-                        children={textarea.current?.resizableTextArea?.textArea.value!}
-                    />
-                )}
+                {markdownShow && <Markdown children={textarea.current?.resizableTextArea?.textArea.value!} />}
                 <Form.Item>
                     <Button loading={isLoading || updIsLoading} type='primary' htmlType='submit'>
                         Сохранить

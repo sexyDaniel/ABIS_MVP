@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from 'react';
-import { courceApi } from '../../../services/courseService';
+import { courseApi } from '../../../services/courseService';
 import SubItemForm from '../SubItemForm/SubItemForm';
 import { Button, message, Modal } from 'antd';
 import { CourseStructure } from '../../../types/CourseStructure';
@@ -10,7 +10,7 @@ type AddSubItemButtonProps = {
 };
 
 const AddSubItemButton: FC<AddSubItemButtonProps> = ({ className, course }) => {
-    const [addSubItem, { isLoading }] = courceApi.useAddSubItemMutation();
+    const [addSubItem, { isLoading }] = courseApi.useAddSubItemMutation();
     const [visible, setVisible] = useState(false);
 
     const showModal = () => {

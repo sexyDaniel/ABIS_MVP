@@ -1,4 +1,4 @@
-import { courceApi } from '../../../services/courseService';
+import { courseApi } from '../../../services/courseService';
 import React, { FC, useEffect, useState } from 'react';
 import { EditOutlined } from '@ant-design/icons';
 import { Button, message, Modal, Spin } from 'antd';
@@ -11,8 +11,8 @@ type EditSubItemButtonProps = {
 
 const EditSubItemButton: FC<EditSubItemButtonProps> = ({ className, id }) => {
     const [visible, setVisible] = useState(false);
-    const { data, isLoading } = courceApi.useGetSubItemQuery(id, { skip: !visible });
-    const [changeSubItem, { isLoading: changeIsLoading }] = courceApi.useChangeSubItemMutation();
+    const { data, isLoading } = courseApi.useGetSubItemQuery(id, { skip: !visible });
+    const [changeSubItem, { isLoading: changeIsLoading }] = courseApi.useChangeSubItemMutation();
 
     const showModal = () => {
         setVisible(true);

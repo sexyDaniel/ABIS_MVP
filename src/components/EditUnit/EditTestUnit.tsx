@@ -1,6 +1,6 @@
 import { Button, Form, Input, List, message, Spin } from 'antd';
 import React, { FC } from 'react';
-import { courceApi } from '../../services/courseService';
+import { courseApi } from '../../services/courseService';
 import AddTestItem from './AddTestItem/AddTestItem';
 import EditTestItem from './EditTestItem/EditTestItem';
 
@@ -12,9 +12,9 @@ type EditTestUnitProps = {
 };
 
 const EditTestUnit: FC<EditTestUnitProps> = ({ id }) => {
-    const { data: testUnit, isLoading: testUnitIsLoading } = courceApi.useGetTestUnitQuery(Number(id));
-    const [changeTestUnit, { isLoading: updIsLoading }] = courceApi.useChangeTestUnitMutation();
-    const { data: testItems, isLoading: testItemsIsLoading } = courceApi.useGetTestItemsQuery(Number(id));
+    const { data: testUnit, isLoading: testUnitIsLoading } = courseApi.useGetTestUnitQuery(Number(id));
+    const [changeTestUnit, { isLoading: updIsLoading }] = courseApi.useChangeTestUnitMutation();
+    const { data: testItems, isLoading: testItemsIsLoading } = courseApi.useGetAdminTestItemsQuery(Number(id));
 
     const onFinish = (values: any) =>
         changeTestUnit({ id, ...values })

@@ -1,8 +1,8 @@
 import { Button, Form, Input, message, Spin } from 'antd';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import React, { FC, useRef, useState } from 'react';
-import ReactMarkdown from 'react-markdown';
-import { courceApi } from '../../services/courseService';
+import { courseApi } from '../../services/courseService';
+import Markdown from '../Markdown/Markdown';
 
 import styles from './EditUnit.module.scss';
 
@@ -13,8 +13,8 @@ type EditTheoryUnitProps = {
 
 const EditTheoryUnit: FC<EditTheoryUnitProps> = ({ id }) => {
     const textarea = useRef<TextAreaRef>(null);
-    const { data: theoryUnit, isLoading: theoryUnitIsLoading } = courceApi.useGetTheoryUnitQuery(Number(id));
-    const [changeTheoryUnit, { isLoading: updIsLoading }] = courceApi.useChangeTheoryUnitMutation();
+    const { data: theoryUnit, isLoading: theoryUnitIsLoading } = courseApi.useGetAdminTheoryUnitQuery(Number(id));
+    const [changeTheoryUnit, { isLoading: updIsLoading }] = courseApi.useChangeTheoryUnitMutation();
     const [markdownShow, setMarkdownShow] = useState(false);
 
     const onFinish = (values: any) =>
@@ -51,12 +51,7 @@ const EditTheoryUnit: FC<EditTheoryUnitProps> = ({ id }) => {
                 <TextArea ref={textarea} />
             </Form.Item>
 
-            {markdownShow && (
-                <ReactMarkdown
-                    className={`markdown-body ${styles.space}`}
-                    children={textarea.current?.resizableTextArea?.textArea.value!}
-                />
-            )}
+            {markdownShow && <Markdown children={textarea.current?.resizableTextArea?.textArea.value!} />}
 
             <Form.Item>
                 <Button loading={updIsLoading} type='primary' htmlType='submit'>

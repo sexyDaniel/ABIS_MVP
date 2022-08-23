@@ -1,6 +1,6 @@
 import { Button, List, message, Space, Spin, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { courceApi } from '../../services/courseService';
+import { courseApi } from '../../services/courseService';
 import { EDIT_COURSE_ROUTE } from '../../routes';
 import { useNavigate } from 'react-router-dom';
 import React, { FC } from 'react';
@@ -9,8 +9,8 @@ import styles from './AdminCourse.module.scss';
 
 const AdminCourse: FC = () => {
     const navigate = useNavigate();
-    const { data: courses, isLoading: coursesIsLoading } = courceApi.useGetAdminCoursesQuery();
-    const [changeStatus, { isLoading: changeStatusIsLoading }] = courceApi.useChangeStatusCourseMutation();
+    const { data: courses, isLoading: coursesIsLoading } = courseApi.useGetAdminCoursesQuery();
+    const [changeStatus, { isLoading: changeStatusIsLoading }] = courseApi.useChangeStatusCourseMutation();
 
     const onChangeStatus = (id: number) => () =>
         changeStatus(id)

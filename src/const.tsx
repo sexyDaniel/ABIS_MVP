@@ -1,6 +1,14 @@
 import { DashboardOutlined, TeamOutlined, SolutionOutlined, PlusSquareOutlined } from '@ant-design/icons';
 import React from 'react';
-import { ADMINS_ROUTE, ADMIN_COURSE_ROUTE, COMPANY_ROUTE, COURSES_ROUTE, DASHBOARD_ROUTE, USERS_ROUTE } from './routes';
+import {
+    ADMINS_ROUTE,
+    ADMIN_COURSE_ROUTE,
+    COMPANY_ROUTE,
+    COURSES_ROUTE,
+    DASHBOARD_ROUTE,
+    MY_COURSES_ROUTE,
+    USERS_ROUTE,
+} from './routes';
 
 export type NavItem = {
     path: string;
@@ -43,6 +51,11 @@ export const UserLinks: NavItem[] = [
     {
         path: COURSES_ROUTE,
         label: 'Курсы',
+        Icon: PlusSquareOutlined,
+    },
+    {
+        path: MY_COURSES_ROUTE,
+        label: 'Мои курсы',
         Icon: PlusSquareOutlined,
     },
 ];

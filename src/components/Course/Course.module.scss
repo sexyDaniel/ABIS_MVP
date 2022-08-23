@@ -1,0 +1,42 @@
+.btn {
+    margin-top: 20px;
+    margin-left: auto;
+    display: block !important;
+}
+.affix {
+    position: absolute;
+    top: 10px;
+    right: 0px;
+    width: 150px;
+}
+.content {
+    padding-right: 160px;
+}
+.wrapper {
+    position: relative;
+}
+.item {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 7px 20px;
+    padding-right: 0;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border 0.3s ease;
+    border-left: 1px solid var(--dark-bg-color);
+
+    &.active {
+        border-left: 1px solid var(--accent-color);
+    }
+}
+.backBtn {
+    outline: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}

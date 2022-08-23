@@ -4,9 +4,10 @@ import { CourseStructure } from '../types/CourseStructure';
 import { SubItem } from '../types/SubItem';
 import { TheoryUnit } from '../types/TheoryUnit';
 import { TestUnit } from '../types/TestUnit';
+import { AdminTestItem } from '../types/AdminTestItem';
 import { TestItem } from '../types/TestItem';
 
-export const courceApi = commonApi
+export const courseApi = commonApi
     .enhanceEndpoints({ addTagTypes: ['AdminCourses', 'Courses', 'UserCourses', 'Structure', 'TestItems'] })
     .injectEndpoints({
         endpoints: (builder) => ({
@@ -22,8 +23,12 @@ export const courceApi = commonApi
                 query: () => 'api/courses/for-user',
                 providesTags: ['UserCourses'],
             }),
-            getCourse: builder.query<CourseStructure, number>({
+            getAdminCourse: builder.query<CourseStructure, number>({
                 query: (id) => `/api/courses/${id}/for-super-admin`,
+                providesTags: ['Structure'],
+            }),
+            getCourse: builder.query<CourseStructure, number>({
+                query: (id) => `/api/courses/${id}/for-user`,
                 providesTags: ['Structure'],
             }),
             addCourse: builder.mutation<void, Course>({
@@ -34,12 +39,12 @@ export const courceApi = commonApi
                 }),
                 invalidatesTags: ['Courses', 'AdminCourses'],
             }),
-            addToCourse: builder.mutation<void, number>({
+            addToCourse: builder.mutation<void, string>({
                 query: (id) => ({
                     url: `/api/courses/${id}/add-to-course`,
                     method: 'POST',
                 }),
-                invalidatesTags: ['UserCourses'],
+                invalidatesTags: ['UserCourses', 'Structure'],
             }),
             changeCourse: builder.mutation<void, Course>({
                 query: (data) => ({
@@ -77,8 +82,11 @@ export const courceApi = commonApi
                 invalidatesTags: ['Structure'],
             }),
 
-            getTheoryUnit: builder.query<TheoryUnit, number>({
+            getAdminTheoryUnit: builder.query<TheoryUnit, number>({
                 query: (id) => `/api/theory-units/${id}/for-super-admin`,
+            }),
+            getTheoryUnit: builder.query<TheoryUnit, number>({
+                query: (id) => `/api/theory-units/${id}/for-user`,
             }),
             addTheoryUnit: builder.mutation<void, TheoryUnit>({
                 query: (data) => ({
@@ -117,9 +125,15 @@ export const courceApi = commonApi
                 invalidatesTags: ['Structure'],
             }),
 
-            getTestItems: builder.query<TestItem[], number>({
+            getAdminTestItems: builder.query<AdminTestItem[], number>({
                 query: (id) => `/api/test-unit/${id}/test-items/for-super-admin`,
                 providesTags: ['TestItems'],
+            }),
+            getTestItems: builder.query<number[], number>({
+                query: (id) => `/api/test-units/${id}/test-items`,
+            }),
+            getTestItem: builder.query<TestItem, number>({
+                query: (id) => `/api/test-items/${id}`,
             }),
             changeTestItem: builder.mutation<void, { id: number; questionText: string }>({
                 query: (data) => ({

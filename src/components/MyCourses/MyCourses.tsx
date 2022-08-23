@@ -4,10 +4,10 @@ import { Card, List, Spin } from 'antd';
 import { Link } from 'react-router-dom';
 import React, { FC } from 'react';
 
-import styles from './Courses.module.scss';
+import styles from './MyCourses.module.scss';
 
-const Courses: FC = () => {
-    const { data, isLoading } = courseApi.useGetCoursesQuery();
+const MyCourses: FC = () => {
+    const { data, isLoading } = courseApi.useGetUserCoursesQuery();
     return (
         <>
             {isLoading && <Spin />}
@@ -33,4 +33,4 @@ const Courses: FC = () => {
     );
 };
 
-export default Courses;
+export default MyCourses;
