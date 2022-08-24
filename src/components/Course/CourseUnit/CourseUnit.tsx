@@ -70,6 +70,11 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext }) => {
         }
     };
 
+    const resetTest = () => {
+        setCurrentTestItemIndex(0);
+        setFinished(false);
+    };
+
     useEffect(() => {
         if (testItems) setCurrentTestItemIndex(0);
     }, [testItems]);
@@ -84,11 +89,22 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext }) => {
 
     if (testItemsIsLoading || testItemIsLoading || statisticIsLoading || theoryUnitIsLoading) return <Spin />;
 
-    if (statistic) {
+    if (statistic && finished) {
         return (
-            <Typography>
-                Вы ответили правильно на {statistic.correctAnswerCount} из {statistic.questionCount} вопросов
-            </Typography>
+            <Space size={20} direction='vertical'>
+                <Typography>
+                    Вы ответили правильно на {statistic.correctAnswerCount} из {statistic.questionCount} вопросов
+                </Typography>
+                {statistic.correctAnswerCount / statistic.questionCount > 0.8 ? (
+                    <Button type='primary' onClick={onNext}>
+                        Далее
+                    </Button>
+                ) : (
+                    <Button type='primary' onClick={resetTest}>
+                        Попробовать снова
+                    </Button>
+                )}
+            </Space>
         );
     }
 

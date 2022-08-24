@@ -3,18 +3,6 @@
     margin-left: auto;
     display: block !important;
 }
-.affix {
-    position: absolute;
-    top: 10px;
-    right: 0px;
-    width: 150px;
-}
-.content {
-    padding-right: 160px;
-}
-.wrapper {
-    position: relative;
-}
 .item {
     white-space: nowrap;
     overflow: hidden;
@@ -29,6 +17,11 @@
     &.active {
         border-left: 1px solid var(--accent-color);
     }
+    &.completed {
+        &::before {
+            content: '✓ ';
+        }
+    }
 }
 .backBtn {
     outline: none;
@@ -39,4 +32,9 @@
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
+}
+.drawerBtn {
+    position: fixed;
+    right: 30px;
+    bottom: 40px;
 }

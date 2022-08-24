@@ -8,7 +8,7 @@ import { AdminTestItem } from '../types/AdminTestItem';
 import { TestItem } from '../types/TestItem';
 
 export const courseApi = commonApi
-    .enhanceEndpoints({ addTagTypes: ['AdminCourses', 'Courses', 'UserCourses', 'Structure', 'TestItems'] })
+    .enhanceEndpoints({ addTagTypes: ['AdminCourses', 'Courses', 'UserCourses', 'Structure', 'TestItems', 'SubItem'] })
     .injectEndpoints({
         endpoints: (builder) => ({
             getAdminCourses: builder.query<Course[], void>({
@@ -64,6 +64,7 @@ export const courseApi = commonApi
 
             getSubItem: builder.query<SubItem, number>({
                 query: (id) => `/api/course-sub-items/${id}/for-super-admin`,
+                providesTags: ['SubItem'],
             }),
             addSubItem: builder.mutation<void, SubItem>({
                 query: (data) => ({
@@ -79,7 +80,7 @@ export const courseApi = commonApi
                     method: 'PUT',
                     body: { number: 1, ...data },
                 }),
-                invalidatesTags: ['Structure'],
+                invalidatesTags: ['Structure', 'SubItem'],
             }),
 
             getAdminTheoryUnit: builder.query<TheoryUnit, number>({

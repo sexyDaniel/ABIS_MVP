@@ -1,7 +1,7 @@
-import { Role } from '../types/Role';
+import { AdminStatistic } from '../types/AdminStatistic';
 import { commonApi } from './commonService';
 
-export const statisticApi = commonApi.enhanceEndpoints({ addTagTypes: ['Statistic'] }).injectEndpoints({
+export const statisticApi = commonApi.enhanceEndpoints({ addTagTypes: ['Statistic', 'Structure'] }).injectEndpoints({
     endpoints: (builder) => ({
         checkOneAnswer: builder.mutation<void, { testUnitId: number; testItemId: number; answerId: number }>({
             query: (data) => ({
@@ -45,6 +45,18 @@ export const statisticApi = commonApi.enhanceEndpoints({ addTagTypes: ['Statisti
         getStatistic: builder.query<{ questionCount: number; correctAnswerCount: number }, number>({
             query: (id) => `/api/users/user/test-units/${id}/statistics`,
             providesTags: ['Statistic'],
+        }),
+        getAdminStatistic: builder.query<AdminStatistic, number>({
+            query: (id) => `/api/company/${id}/statistics`,
+        }),
+
+        setProgress: builder.mutation<void, { courseId: number; unitId: number }>({
+            query: (data) => ({
+                url: `/api/units/${data.unitId}/progress/create`,
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Structure'],
         }),
     }),
 });

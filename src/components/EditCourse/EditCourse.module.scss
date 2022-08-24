@@ -13,3 +13,13 @@
 .titleBlock {
     flex: 1 1 auto !important;
 }
+.backBtn {
+    outline: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}

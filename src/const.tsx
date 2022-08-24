@@ -1,4 +1,5 @@
-import { DashboardOutlined, TeamOutlined, SolutionOutlined, PlusSquareOutlined } from '@ant-design/icons';
+import { DashboardOutlined, TeamOutlined, SolutionOutlined } from '@ant-design/icons';
+import AdminsIcon from './components/Icons/AdminsIcon';
 import React from 'react';
 import {
     ADMINS_ROUTE,
@@ -9,6 +10,8 @@ import {
     MY_COURSES_ROUTE,
     USERS_ROUTE,
 } from './routes';
+import CoursesIcon from './components/Icons/CoursesIcon';
+import MyCoursesIcon from './components/Icons/MyCourses';
 
 export type NavItem = {
     path: string;
@@ -35,7 +38,7 @@ export const AdminLinks: NavItem[] = [
     {
         path: ADMINS_ROUTE,
         label: 'Администраторы',
-        Icon: TeamOutlined,
+        Icon: AdminsIcon,
     },
 ];
 
@@ -43,7 +46,7 @@ export const SuperAdminLinks: NavItem[] = [
     {
         path: ADMIN_COURSE_ROUTE,
         label: 'Курсы',
-        Icon: PlusSquareOutlined,
+        Icon: CoursesIcon,
     },
 ];
 
@@ -51,11 +54,11 @@ export const UserLinks: NavItem[] = [
     {
         path: COURSES_ROUTE,
         label: 'Курсы',
-        Icon: PlusSquareOutlined,
+        Icon: CoursesIcon,
     },
     {
         path: MY_COURSES_ROUTE,
         label: 'Мои курсы',
-        Icon: PlusSquareOutlined,
+        Icon: MyCoursesIcon,
     },
 ];

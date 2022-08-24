@@ -2,7 +2,7 @@ import { Button, Form, Input, List, message, Radio, Space, Spin, Typography } fr
 import EditSubItemButton from './EditSubItemButton/EditSubItemButton';
 import AddSubItemButton from './AddSubItemButton/AddSubItemButton';
 import { ADMIN_COURSE_ROUTE, EDIT_UNIT_ROUTE } from '../../routes';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { useNavigate, useParams } from 'react-router-dom';
 import { courseApi } from '../../services/courseService';
@@ -66,6 +66,9 @@ const EditCourse: FC<EditCourseProps> = () => {
 
     return (
         <>
+            <button className={styles.backBtn} onClick={() => navigate(ADMIN_COURSE_ROUTE)}>
+                <ArrowLeftOutlined />к списку курсов
+            </button>
             <Typography className={styles.space}>Вы можете изменять структуру курса</Typography>
             <Form className={styles.space} name='course' layout='vertical' onFinish={onCourseFinish} autoComplete='off'>
                 <Form.Item
@@ -80,7 +83,7 @@ const EditCourse: FC<EditCourseProps> = () => {
                     name='image'
                     initialValue={course?.image}
                     rules={[{ required: true, message: 'Пожалуйста введите svg код картинки' }]}>
-                    <TextArea />
+                    <TextArea autoSize={{ maxRows: 10 }} />
                 </Form.Item>
                 <Button className={styles.space} onClick={() => setMarkdownShow((prev) => !prev)}>
                     Посмотреть страницу
@@ -91,7 +94,7 @@ const EditCourse: FC<EditCourseProps> = () => {
                     style={markdownShow ? { display: 'none' } : undefined}
                     initialValue={course?.description}
                     rules={[{ required: true, message: 'Пожалуйста введите описание' }]}>
-                    <TextArea ref={textarea} />
+                    <TextArea ref={textarea} autoSize />
                 </Form.Item>
                 {markdownShow && <Markdown children={textarea.current?.resizableTextArea?.textArea.value!} />}
                 <Form.Item>
