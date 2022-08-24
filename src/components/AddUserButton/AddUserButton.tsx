@@ -21,14 +21,23 @@ const AddUserButton: FC<AddUserButtonProps> = ({ className, companyId, role = Ro
 
     const handleOk = () => {
         if (role === Role.Admin) {
-            addUser({ email: emails, passwordSavedLink: location.origin + RESET_ROUTE, companyId, role: Role.Admin })
+            addUser({
+                email: emails,
+                passwordSavedLink: `${location.origin + location.pathname}#${RESET_ROUTE}`,
+                companyId,
+                role: Role.Admin,
+            })
                 .unwrap()
                 .then(
                     () => setVisible(false),
                     (err) => message.error(err.data?.message ?? 'Произошла ошибка')
                 );
         } else {
-            addUsers({ emails: emails.split(','), passwordSavedLink: location.origin + RESET_ROUTE, companyId })
+            addUsers({
+                emails: emails.split(','),
+                passwordSavedLink: `${location.origin + location.pathname}#${RESET_ROUTE}`,
+                companyId,
+            })
                 .unwrap()
                 .then(
                     () => setVisible(false),

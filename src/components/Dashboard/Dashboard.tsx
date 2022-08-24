@@ -1,7 +1,9 @@
 import { Col, List, Progress, Row, Select, Space, Spin, Typography } from 'antd';
-import React, { FC, useState } from 'react';
-import { companyApi } from '../../services/companyService';
 import { statisticApi } from '../../services/statisticService';
+import { companyApi } from '../../services/companyService';
+import React, { FC, useState } from 'react';
+
+import styles from './Dashboard.module.scss';
 
 const Dashboard: FC = () => {
     const { data: companies, isLoading: companiesIsLoading } = companyApi.useGetCompaniesQuery();
@@ -20,11 +22,11 @@ const Dashboard: FC = () => {
     }
 
     return (
-        <Space direction='vertical' size={20} style={{ display: 'flex' }}>
+        <Space direction='vertical' size={20} className={styles.space}>
             <Typography>Здесь отображается прогресс пользователей компании по курсам.</Typography>
             <Space size={20}>
                 <Typography>Компания:</Typography>
-                <Select placeholder='Выберите компанию' allowClear onChange={onChange}>
+                <Select className={styles.select} placeholder='Выберите компанию' allowClear onChange={onChange}>
                     {companies.map(({ id, name }) => (
                         <Select.Option key={id} value={id}>
                             {name}
@@ -37,13 +39,13 @@ const Dashboard: FC = () => {
                     {statisticIsLoading && <Spin />}
                     {statistic && (
                         <List
-                            size='small'
                             bordered
                             dataSource={statistic}
+                            loading={statisticIsLoading}
                             renderItem={(item) => (
                                 <List.Item>
-                                    <Space direction='vertical' style={{ display: 'flex', width: '100%' }}>
-                                        <Typography.Text strong>{item.courseName}</Typography.Text>
+                                    <Space direction='vertical' className={styles.space}>
+                                        <Typography.Title level={5}>{item.courseName}</Typography.Title>
                                         {item.users.map((user) => (
                                             <Row key={user.id}>
                                                 <Col span={10}>

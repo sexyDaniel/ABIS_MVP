@@ -14,6 +14,7 @@ export const USERS_ROUTE = '/users';
 export const ADMIN_COURSE_ROUTE = '/admin/courses';
 export const EDIT_COURSE_ROUTE = '/admin/course';
 export const EDIT_UNIT_ROUTE = '/admin/unit';
+export const FISHING_ROUTE = '/fishing';
 
 export const COURSES_ROUTE = '/courses';
 export const MY_COURSES_ROUTE = '/my-courses';
@@ -80,6 +81,11 @@ export const adminRoutes: Routes = {
             path: ADMINS_ROUTE,
             Component: React.lazy(() => import('./components/Admins/Admins')),
             title: 'Администраторы',
+        },
+        {
+            path: FISHING_ROUTE,
+            Component: React.lazy(() => import('./components/FishingAttack/FishingAttack')),
+            title: 'Фишинговые атаки',
         },
     ],
     defaultPath: PROFILE_ROUTE,

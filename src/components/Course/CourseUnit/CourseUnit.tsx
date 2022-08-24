@@ -1,20 +1,20 @@
-import { Button, Checkbox, Input, List, message, Radio, Space, Spin, Typography } from 'antd';
-import React, { FC, useEffect, useState } from 'react';
-import { courseApi } from '../../../services/courseService';
+import { Button, Checkbox, Input, message, Radio, Result, Space, Spin, Typography } from 'antd';
 import { statisticApi } from '../../../services/statisticService';
-import { UnitStructure } from '../../../types/CourseStructure';
 import CorrelateInput from '../../CorrelateInput/CorrelateInput';
+import { UnitStructure } from '../../../types/CourseStructure';
+import { courseApi } from '../../../services/courseService';
+import React, { FC, useEffect, useState } from 'react';
 import Markdown from '../../Markdown/Markdown';
 
 import styles from './CourseUnit.module.scss';
 
 type CourseUnitProps = {
-    className?: string;
     unit: UnitStructure;
     onNext?: () => void;
+    canNext?: boolean;
 };
 
-const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext }) => {
+const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
     const [checkOneAnswer, { isLoading: oneAnswerIsLoading }] = statisticApi.useCheckOneAnswerMutation();
     const [checkMultipleAnswer, { isLoading: multipleAnswerIsLoading }] = statisticApi.useCheckMultipleAnswerMutation();
     const [checkOpenAnswer, { isLoading: openAnswerIsLoading }] = statisticApi.useCheckOpenAnswerMutation();
@@ -83,28 +83,42 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext }) => {
         return (
             <Space direction='vertical' size={20}>
                 <Markdown children={theoryUnit.body} />
-                <Button onClick={onNext}>Далее</Button>
+                {canNext && <Button onClick={onNext}>Далее</Button>}
             </Space>
         );
 
     if (testItemsIsLoading || testItemIsLoading || statisticIsLoading || theoryUnitIsLoading) return <Spin />;
 
     if (statistic && finished) {
+        if (statistic.correctAnswerCount / statistic.questionCount > 0.8) {
+            return (
+                <Result
+                    status='success'
+                    title='Поздравляем с успешным прохождением теста!'
+                    subTitle={`Вы ответили правильно на ${statistic.correctAnswerCount} из ${statistic.questionCount} вопросов`}
+                    extra={
+                        canNext
+                            ? [
+                                  <Button type='primary' onClick={onNext}>
+                                      Далее
+                                  </Button>,
+                              ]
+                            : undefined
+                    }
+                />
+            );
+        }
         return (
-            <Space size={20} direction='vertical'>
-                <Typography>
-                    Вы ответили правильно на {statistic.correctAnswerCount} из {statistic.questionCount} вопросов
-                </Typography>
-                {statistic.correctAnswerCount / statistic.questionCount > 0.8 ? (
-                    <Button type='primary' onClick={onNext}>
-                        Далее
-                    </Button>
-                ) : (
+            <Result
+                status='error'
+                title='Тест не пройден'
+                subTitle={`Вы ответили правильно на ${statistic.correctAnswerCount} из ${statistic.questionCount} вопросов`}
+                extra={[
                     <Button type='primary' onClick={resetTest}>
                         Попробовать снова
-                    </Button>
-                )}
-            </Space>
+                    </Button>,
+                ]}
+            />
         );
     }
 
@@ -112,7 +126,7 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext }) => {
         <div>
             {testItem && (
                 <Space direction='vertical' size={20} className={styles.fullWidth}>
-                    <Typography>{testItem.questionText}</Typography>
+                    <Markdown children={testItem.questionText} />
                     {testItem.itemType === 'OneAnswer' && (
                         <Radio.Group onChange={(value) => setAnswer(value.target.value)}>
                             <Space direction='vertical'>

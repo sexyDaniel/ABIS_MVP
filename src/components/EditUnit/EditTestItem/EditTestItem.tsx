@@ -86,7 +86,7 @@ const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
     return (
         <Space direction='vertical' className={styles.fullWidth}>
             <div className={styles.answerHeader}>
-                <Typography.Text strong>{testItem.questionText}</Typography.Text>
+                <Typography>{testItem.questionText}</Typography>
                 <div>
                     <EditTestItemButton testItem={testItem} />
                     <Button onClick={onDeleteItem}>
@@ -94,11 +94,10 @@ const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
                     </Button>
                 </div>
             </div>
-            <Typography>Тип: {TestItemType}</Typography>
+            <Typography.Text type='secondary'>Тип: {TestItemType}</Typography.Text>
 
             {testItem.answers && (
                 <List
-                    size='small'
                     bordered
                     dataSource={testItem.answers}
                     renderItem={(answer) => (
@@ -124,7 +123,6 @@ const EditTestItem: FC<EditTestItemProps> = ({ testItem }) => {
             )}
             {testItem.getRatioQuestions && (
                 <List
-                    size='small'
                     bordered
                     dataSource={testItem.getRatioQuestions}
                     renderItem={(answer) => (

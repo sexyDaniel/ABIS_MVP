@@ -26,9 +26,9 @@ const Users: FC = () => {
     }
 
     return (
-        <>
-            <Typography className={styles.space}>Вы можете добавлять и удалять пользователей.</Typography>
-            <Space className={styles.space} size={20}>
+        <Space direction='vertical' className={styles.space} size={20}>
+            <Typography>Вы можете добавлять и удалять пользователей.</Typography>
+            <Space size={20}>
                 <Typography>Компания:</Typography>
                 <Select className={styles.select} placeholder='Выберите компанию' allowClear onChange={onChange}>
                     {companies.map(({ id, name }) => (
@@ -45,7 +45,6 @@ const Users: FC = () => {
                         <>
                             <AddUserButton companyId={selectedCompany} />
                             <List
-                                size='small'
                                 bordered
                                 dataSource={users}
                                 renderItem={(item) => (
@@ -65,7 +64,7 @@ const Users: FC = () => {
                     )}
                 </>
             )}
-        </>
+        </Space>
     );
 };
 

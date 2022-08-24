@@ -1,6 +1,6 @@
 import { adminRoutes, publicRoutes, superAdminRoutes, userRoutes } from './routes';
 import FormPageWrapper from './components/FormPageWrapper/FormPageWrapper';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, HashRouter } from 'react-router-dom';
 import { AdminLinks, SuperAdminLinks, UserLinks } from './const';
 import { useAppDispatch, useAppSelector } from './hooks/redux';
 import NavBar from './components/NavBar/NavBar';
@@ -9,7 +9,8 @@ import { setUser } from './store/reducers/UserSlice';
 import React, { useEffect, useState } from 'react';
 import { authAPI } from './services/authService';
 import Header from './components/Header/Header';
-import { Layout, Spin } from 'antd';
+import { ConfigProvider, Layout, Spin } from 'antd';
+import ruRu from 'antd/es/locale/ru_RU';
 
 import styles from './App.module.scss';
 
@@ -43,84 +44,86 @@ const App = () => {
         : superAdminRoutes.defaultPath;
 
     return (
-        <BrowserRouter>
-            <Layout style={{ minHeight: '100vh' }}>
-                <Header />
-                <Layout>
-                    {data && (
-                        <Layout.Sider
-                            theme='light'
-                            collapsible
-                            collapsed={collapsed}
-                            onCollapse={(value) => setCollapsed(value)}>
-                            <NavBar
-                                links={
-                                    data.role === 'User'
-                                        ? UserLinks
-                                        : data.role === 'Admin'
-                                        ? AdminLinks
-                                        : SuperAdminLinks
-                                }
-                            />
-                        </Layout.Sider>
-                    )}
-                    <Layout.Content className={styles.content}>
-                        <React.Suspense fallback={<Spin />}>
-                            <Routes>
-                                {data?.role === 'User' &&
-                                    userRoutes.routes.map(({ path, Component, title }) => (
+        <HashRouter>
+            <ConfigProvider locale={ruRu}>
+                <Layout style={{ minHeight: '100vh' }}>
+                    <Header />
+                    <Layout>
+                        {data && (
+                            <Layout.Sider
+                                theme='light'
+                                collapsible
+                                collapsed={collapsed}
+                                onCollapse={(value) => setCollapsed(value)}>
+                                <NavBar
+                                    links={
+                                        data.role === 'User'
+                                            ? UserLinks
+                                            : data.role === 'Admin'
+                                            ? AdminLinks
+                                            : SuperAdminLinks
+                                    }
+                                />
+                            </Layout.Sider>
+                        )}
+                        <Layout.Content className={styles.content}>
+                            <React.Suspense fallback={<Spin />}>
+                                <Routes>
+                                    {data?.role === 'User' &&
+                                        userRoutes.routes.map(({ path, Component, title }) => (
+                                            <Route
+                                                key={path}
+                                                path={path}
+                                                element={
+                                                    <PageWrapper title={title}>
+                                                        <Component />
+                                                    </PageWrapper>
+                                                }
+                                            />
+                                        ))}
+                                    {data?.role === 'Admin' &&
+                                        adminRoutes.routes.map(({ path, Component, title }) => (
+                                            <Route
+                                                key={path}
+                                                path={path}
+                                                element={
+                                                    <PageWrapper title={title}>
+                                                        <Component />
+                                                    </PageWrapper>
+                                                }
+                                            />
+                                        ))}
+                                    {data?.role === 'SuperAdmin' &&
+                                        superAdminRoutes.routes.map(({ path, Component, title }) => (
+                                            <Route
+                                                key={path}
+                                                path={path}
+                                                element={
+                                                    <PageWrapper title={title}>
+                                                        <Component />
+                                                    </PageWrapper>
+                                                }
+                                            />
+                                        ))}
+                                    {publicRoutes.routes.map(({ path, Component, title }) => (
                                         <Route
                                             key={path}
                                             path={path}
                                             element={
-                                                <PageWrapper title={title}>
+                                                <FormPageWrapper title={title}>
                                                     <Component />
-                                                </PageWrapper>
+                                                </FormPageWrapper>
                                             }
                                         />
                                     ))}
-                                {data?.role === 'Admin' &&
-                                    adminRoutes.routes.map(({ path, Component, title }) => (
-                                        <Route
-                                            key={path}
-                                            path={path}
-                                            element={
-                                                <PageWrapper title={title}>
-                                                    <Component />
-                                                </PageWrapper>
-                                            }
-                                        />
-                                    ))}
-                                {data?.role === 'SuperAdmin' &&
-                                    superAdminRoutes.routes.map(({ path, Component, title }) => (
-                                        <Route
-                                            key={path}
-                                            path={path}
-                                            element={
-                                                <PageWrapper title={title}>
-                                                    <Component />
-                                                </PageWrapper>
-                                            }
-                                        />
-                                    ))}
-                                {publicRoutes.routes.map(({ path, Component, title }) => (
-                                    <Route
-                                        key={path}
-                                        path={path}
-                                        element={
-                                            <FormPageWrapper title={title}>
-                                                <Component />
-                                            </FormPageWrapper>
-                                        }
-                                    />
-                                ))}
-                                <Route path='*' element={<Navigate to={defaultPath} replace />} />
-                            </Routes>
-                        </React.Suspense>
-                    </Layout.Content>
+                                    <Route path='*' element={<Navigate to={defaultPath} replace />} />
+                                </Routes>
+                            </React.Suspense>
+                        </Layout.Content>
+                    </Layout>
                 </Layout>
-            </Layout>
-        </BrowserRouter>
+            </ConfigProvider>
+        </HashRouter>
     );
 };
 

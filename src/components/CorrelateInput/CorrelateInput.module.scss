@@ -19,4 +19,7 @@
     &.finished {
         border: 1px solid var(--accent-color);
     }
+    &:not(:last-child) {
+        margin-bottom: 1px;
+    }
 }

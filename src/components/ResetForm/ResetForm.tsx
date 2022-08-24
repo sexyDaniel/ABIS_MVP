@@ -1,11 +1,13 @@
 import { Button, Form, Input, message, Typography } from 'antd';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { setToken } from '../../store/reducers/TokenSlice';
 import { authAPI } from '../../services/authService';
-import { useSearchParams } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import React, { FC, useEffect } from 'react';
+import { PROFILE_ROUTE } from '../../routes';
 
 const ResetForm: FC = () => {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const [setPassword, { data: setPasswordData, isLoading: setPasswordIsLoading }] = authAPI.useSetPasswordMutation();
     const [searchParams] = useSearchParams();
@@ -20,8 +22,11 @@ const ResetForm: FC = () => {
             .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
     useEffect(() => {
-        if (setPasswordData) dispatch(setToken(setPasswordData.accessToken));
-    }, [setPasswordData, dispatch]);
+        if (setPasswordData) {
+            dispatch(setToken(setPasswordData.accessToken));
+            navigate(PROFILE_ROUTE);
+        }
+    }, [setPasswordData, dispatch, navigate]);
 
     return (
         <>

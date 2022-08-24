@@ -1,6 +1,6 @@
 import { courseApi } from '../../services/courseService';
+import { Card, List, Spin, Tooltip } from 'antd';
 import { COURSE_ROUTE } from '../../routes';
-import { Card, List, Spin } from 'antd';
 import { Link } from 'react-router-dom';
 import React, { FC } from 'react';
 
@@ -18,7 +18,12 @@ const MyCourses: FC = () => {
                     renderItem={(item) => (
                         <List.Item>
                             <Link className={styles.link} to={`${COURSE_ROUTE}/${item.id}`}>
-                                <Card title={item.title}>
+                                <Card
+                                    title={
+                                        <Tooltip placement='topLeft' title={item.title}>
+                                            {item.title}
+                                        </Tooltip>
+                                    }>
                                     <img
                                         src={`data:image/svg+xml;utf8,${encodeURIComponent(item.image)}`}
                                         alt={item.title}

@@ -1,4 +1,5 @@
 import { Form, Input } from 'antd';
+import TextArea from 'antd/lib/input/TextArea';
 import React, { FC } from 'react';
 
 type SubItemFormProps = {
@@ -25,11 +26,11 @@ const SubItemForm: FC<SubItemFormProps> = ({ id, onFinish, defaultDescription, d
                 <Input />
             </Form.Item>
             <Form.Item
-                label='Описание раздела'
+                label='Описание раздела (Markdown)'
                 name='description'
                 initialValue={defaultDescription}
                 rules={[{ required: true, message: 'Пожалуйста введите описание' }]}>
-                <Input />
+                <TextArea autoSize />
             </Form.Item>
         </Form>
     );

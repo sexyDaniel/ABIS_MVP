@@ -7,11 +7,13 @@ import {
     COMPANY_ROUTE,
     COURSES_ROUTE,
     DASHBOARD_ROUTE,
+    FISHING_ROUTE,
     MY_COURSES_ROUTE,
     USERS_ROUTE,
 } from './routes';
 import CoursesIcon from './components/Icons/CoursesIcon';
 import MyCoursesIcon from './components/Icons/MyCourses';
+import FishingAttackIcon from './components/Icons/FishingAttack';
 
 export type NavItem = {
     path: string;
@@ -39,6 +41,11 @@ export const AdminLinks: NavItem[] = [
         path: ADMINS_ROUTE,
         label: 'Администраторы',
         Icon: AdminsIcon,
+    },
+    {
+        path: FISHING_ROUTE,
+        label: 'Фишинговые атаки',
+        Icon: FishingAttackIcon,
     },
 ];
 

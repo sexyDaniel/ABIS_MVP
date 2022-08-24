@@ -3,18 +3,13 @@ import AddCompanyButton from './AddCompanyButton/AddCompanyButton';
 import { Button, List, message, Spin, Typography } from 'antd';
 import { companyApi } from '../../services/companyService';
 import { DeleteOutlined } from '@ant-design/icons';
+import { Company as CompanyType } from '../../types/Company';
 import React, { FC } from 'react';
 
 import styles from './Company.module.scss';
 
 const Company: FC = () => {
     const { data: companies, isLoading: companiesIsLoading } = companyApi.useGetCompaniesQuery();
-    const [deleteCompany, { isLoading: deleteIsLoading }] = companyApi.useDeleteCompanyMutation();
-
-    const onDelete = (id: number) => () =>
-        deleteCompany(id)
-            .unwrap()
-            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
     return (
         <>
@@ -26,24 +21,38 @@ const Company: FC = () => {
             {companiesIsLoading && <Spin />}
             {companies && (
                 <List
-                    size='small'
                     bordered
                     dataSource={companies}
                     renderItem={(item) => (
-                        <List.Item className={styles.company}>
-                            <Typography>
-                                {item.name} ({item.domainName})
-                            </Typography>
-                            <div>
-                                <EditCompanyButton company={item} />
-                                <Button loading={deleteIsLoading} onClick={onDelete(item.id!)}>
-                                    <DeleteOutlined />
-                                </Button>
-                            </div>
+                        <List.Item>
+                            <CompanyItem company={item} />
                         </List.Item>
                     )}
                 />
             )}
+        </>
+    );
+};
+
+const CompanyItem: FC<{ company: CompanyType }> = ({ company }) => {
+    const [deleteCompany, { isLoading: deleteIsLoading }] = companyApi.useDeleteCompanyMutation();
+
+    const onDelete = () =>
+        deleteCompany(company.id!)
+            .unwrap()
+            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
+
+    return (
+        <>
+            <Typography>
+                {company.name} ({company.domainName})
+            </Typography>
+            <div>
+                <EditCompanyButton company={company} />
+                <Button loading={deleteIsLoading} onClick={onDelete}>
+                    <DeleteOutlined />
+                </Button>
+            </div>
         </>
     );
 };

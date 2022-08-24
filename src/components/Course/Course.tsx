@@ -1,9 +1,8 @@
-import { SubItemStructure, UnitStructure } from '../../types/CourseStructure';
-import { Affix, Button, Drawer, Menu, message, Spin, Typography } from 'antd';
+import { ArrowLeftOutlined, MenuFoldOutlined } from '@ant-design/icons';
+import { Button, Drawer, message, Space, Spin, Typography } from 'antd';
 import { statisticApi } from '../../services/statisticService';
 import { courseApi } from '../../services/courseService';
 import React, { FC, useEffect, useState } from 'react';
-import { ArrowLeftOutlined, MenuFoldOutlined } from '@ant-design/icons';
 import CourseUnit from './CourseUnit/CourseUnit';
 import { useParams } from 'react-router-dom';
 import Markdown from '../Markdown/Markdown';
@@ -12,28 +11,27 @@ import styles from './Course.module.scss';
 
 const Course: FC = () => {
     const { id } = useParams();
-    const [setProgress] = statisticApi.useSetProgressMutation();
     const { data: course } = courseApi.useGetCourseQuery(Number(id));
     const [addToCourse, { isLoading: addIsLoading }] = courseApi.useAddToCourseMutation();
+
     const [currentSubItemIndex, setCurrentSubItemIndex] = useState<number | null>(null);
     const [currentUnitIndex, setcurrentUnitIndex] = useState<number | null>(null);
+
+    const [setProgress] = statisticApi.useSetProgressMutation();
 
     const [visible, setVisible] = useState(false);
     const showDrawer = () => setVisible(true);
     const onClose = () => setVisible(false);
 
-    const onAddClick = () => {
-        addToCourse(id!)
-            .unwrap()
-            .then(() => setCurrentSubItemIndex(0));
-    };
     const toFirstUnit = () => {
         if (course && course.isUserInCourse) setCurrentSubItemIndex(0);
     };
 
+    const backToSubItem = () => setcurrentUnitIndex(null);
+    const backToDescription = () => setCurrentSubItemIndex(null);
+
     useEffect(toFirstUnit, []);
 
-    const onStartSubItem = () => setcurrentUnitIndex(0);
     const onUnitClick = (index: number) => () => {
         setcurrentUnitIndex(index);
         setVisible(false);
@@ -44,8 +42,15 @@ const Course: FC = () => {
         setVisible(false);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-    const backToSubItem = () => setcurrentUnitIndex(null);
-    const backToDescription = () => setCurrentSubItemIndex(null);
+
+    const onAddClick = () =>
+        addToCourse(id!)
+            .unwrap()
+            .then(
+                () => setCurrentSubItemIndex(0),
+                (err) => message.error(err.data?.message ?? 'Произошла ошибка')
+            );
+
     const onNext = () => {
         if (course && currentSubItemIndex !== null && currentUnitIndex !== null) {
             const currentUnit = course.subItems[currentSubItemIndex].units[currentUnitIndex];
@@ -76,12 +81,21 @@ const Course: FC = () => {
     const currentUnit =
         currentSubItem && currentUnitIndex !== null ? currentSubItem.units[currentUnitIndex] : undefined;
 
+    const canStartSubItem = !!(currentSubItem?.units.length !== 0);
+    const canNextSubItem = !(course && currentSubItemIndex === course.subItems.length - 1);
+    const canNextUnit = !(currentSubItem && currentUnitIndex === currentSubItem.units.length - 1);
+
+    const onStartSubItem = () => {
+        if (canStartSubItem) setcurrentUnitIndex(0);
+        else if (currentSubItemIndex !== null) setCurrentSubItemIndex(currentSubItemIndex + 1);
+    };
+
     if (!course) return <Spin />;
 
     return (
         <>
             {!currentSubItem && !currentUnit && (
-                <>
+                <Space direction='vertical' className={styles.space}>
                     <Typography.Title>{course.title}</Typography.Title>
                     <Markdown children={course.description} />
                     {!course.isUserInCourse ? (
@@ -93,28 +107,30 @@ const Course: FC = () => {
                             Продолжить
                         </Button>
                     )}
-                </>
+                </Space>
             )}
             {currentSubItem && !currentUnit && (
-                <>
-                    <button className={styles.backBtn} onClick={backToDescription}>
-                        <ArrowLeftOutlined />к описанию курса
-                    </button>
+                <Space direction='vertical' className={styles.space}>
+                    <Button type='text' icon={<ArrowLeftOutlined />} onClick={backToDescription}>
+                        к описанию курса
+                    </Button>
                     <Typography.Title>{currentSubItem.title}</Typography.Title>
                     <Markdown children={currentSubItem.description!} />
-                    <Button type='primary' loading={addIsLoading} onClick={onStartSubItem} className={styles.btn}>
-                        Начать
-                    </Button>
-                </>
+                    {canNextSubItem && (
+                        <Button type='primary' loading={addIsLoading} onClick={onStartSubItem} className={styles.btn}>
+                            {canStartSubItem ? 'Начать' : 'Далее'}
+                        </Button>
+                    )}
+                </Space>
             )}
             {!!currentSubItem && !!currentUnit && (
-                <>
-                    <button className={styles.backBtn} onClick={backToSubItem}>
-                        <ArrowLeftOutlined />к разделу
-                    </button>
+                <Space direction='vertical' className={styles.space}>
+                    <Button type='text' icon={<ArrowLeftOutlined />} onClick={backToSubItem}>
+                        к разделу
+                    </Button>
                     <Typography.Title>{currentUnit.title}</Typography.Title>
-                    <CourseUnit unit={currentUnit} onNext={onNext} />
-                </>
+                    <CourseUnit unit={currentUnit} onNext={onNext} canNext={canNextUnit} />
+                </Space>
             )}
             {currentSubItem && (
                 <Button

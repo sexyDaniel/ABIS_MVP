@@ -54,6 +54,13 @@ export const courseApi = commonApi
                 }),
                 invalidatesTags: ['Courses', 'AdminCourses', 'Structure'],
             }),
+            deleteCourse: builder.mutation<void, number>({
+                query: (id) => ({
+                    url: `/api/courses/${id}/delete`,
+                    method: 'DELETE',
+                }),
+                invalidatesTags: ['Courses', 'AdminCourses', 'Structure'],
+            }),
             changeStatusCourse: builder.mutation<void, number>({
                 query: (id) => ({
                     url: `/api/courses/${id}/change-status`,
@@ -79,6 +86,13 @@ export const courseApi = commonApi
                     url: `/api/course-sub-items/${data.id}/update`,
                     method: 'PUT',
                     body: { number: 1, ...data },
+                }),
+                invalidatesTags: ['Structure', 'SubItem'],
+            }),
+            deleteSubItem: builder.mutation<void, number>({
+                query: (id) => ({
+                    url: `/api/course-sub-items/${id}/delete`,
+                    method: 'DELETE',
                 }),
                 invalidatesTags: ['Structure', 'SubItem'],
             }),
@@ -122,6 +136,14 @@ export const courseApi = commonApi
                     url: `/api/test-units/${data.id}/update`,
                     method: 'PUT',
                     body: { number: 1, ...data },
+                }),
+                invalidatesTags: ['Structure'],
+            }),
+
+            deleteUnit: builder.mutation<void, number>({
+                query: (id) => ({
+                    url: `/api/structural-units/${id}/delete`,
+                    method: 'DELETE',
                 }),
                 invalidatesTags: ['Structure'],
             }),

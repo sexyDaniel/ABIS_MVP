@@ -36,6 +36,7 @@ const EditSubItemButton: FC<EditSubItemButtonProps> = ({ className, id }) => {
                 <EditOutlined />
             </Button>
             <Modal
+                width={700}
                 visible={visible}
                 title='Изменение раздела'
                 onCancel={handleCancel}

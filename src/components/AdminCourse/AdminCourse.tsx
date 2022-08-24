@@ -3,19 +3,14 @@ import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { courseApi } from '../../services/courseService';
 import { EDIT_COURSE_ROUTE } from '../../routes';
 import { useNavigate } from 'react-router-dom';
+import { Course } from '../../types/Course';
 import React, { FC } from 'react';
 
 import styles from './AdminCourse.module.scss';
 
-const AdminCourse: FC = () => {
+const AdminCourses: FC = () => {
     const navigate = useNavigate();
     const { data: courses, isLoading: coursesIsLoading } = courseApi.useGetAdminCoursesQuery();
-    const [changeStatus, { isLoading: changeStatusIsLoading }] = courseApi.useChangeStatusCourseMutation();
-
-    const onChangeStatus = (id: number) => () =>
-        changeStatus(id)
-            .unwrap()
-            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
 
     return (
         <>
@@ -27,32 +22,11 @@ const AdminCourse: FC = () => {
             {coursesIsLoading && <Spin />}
             {courses && (
                 <List
-                    size='small'
                     bordered
                     dataSource={courses}
                     renderItem={(item) => (
-                        <List.Item className={styles.company}>
-                            <Space size={20}>
-                                <div className={styles.img}>
-                                    <img
-                                        src={`data:image/svg+xml;utf8,${encodeURIComponent(item.image)}`}
-                                        alt={item.title}
-                                    />
-                                </div>
-
-                                <Typography>{item.title}</Typography>
-                            </Space>
-                            <div>
-                                <Button onClick={onChangeStatus(item.id!)} loading={changeStatusIsLoading}>
-                                    {item.courseStatus === 'Publish' ? 'Скрыть' : 'Опубликовать'}
-                                </Button>
-                                <Button onClick={() => navigate(EDIT_COURSE_ROUTE + '/' + item.id)}>
-                                    <EditOutlined />
-                                </Button>
-                                <Button disabled>
-                                    <DeleteOutlined />
-                                </Button>
-                            </div>
+                        <List.Item>
+                            <AdminCourse course={item} />
                         </List.Item>
                     )}
                 />
@@ -61,4 +35,44 @@ const AdminCourse: FC = () => {
     );
 };
 
-export default AdminCourse;
+const AdminCourse: FC<{ course: Course }> = ({ course }) => {
+    const navigate = useNavigate();
+    const [changeStatus, { isLoading: changeStatusIsLoading }] = courseApi.useChangeStatusCourseMutation();
+    const [deleteCourse, { isLoading: deleteIsLoading }] = courseApi.useDeleteCourseMutation();
+
+    const onChangeStatusClick = () =>
+        changeStatus(course.id!)
+            .unwrap()
+            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
+
+    const onEditClick = () => navigate(`${EDIT_COURSE_ROUTE}/${course.id}`);
+
+    const onDeleteClick = () =>
+        deleteCourse(course.id!)
+            .unwrap()
+            .catch((err) => message.error(err.data?.message ?? 'Произошла ошибка'));
+
+    return (
+        <>
+            <Space size={20}>
+                <div className={styles.img}>
+                    <img src={`data:image/svg+xml;utf8,${encodeURIComponent(course.image)}`} alt={course.title} />
+                </div>
+                <Typography>{course.title}</Typography>
+            </Space>
+            <div>
+                <Button onClick={onChangeStatusClick} loading={changeStatusIsLoading}>
+                    {course.courseStatus === 'Publish' ? 'Скрыть' : 'Опубликовать'}
+                </Button>
+                <Button onClick={onEditClick}>
+                    <EditOutlined />
+                </Button>
+                <Button onClick={onDeleteClick} loading={deleteIsLoading}>
+                    <DeleteOutlined />
+                </Button>
+            </div>
+        </>
+    );
+};
+
+export default AdminCourses;

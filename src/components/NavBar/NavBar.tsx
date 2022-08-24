@@ -20,7 +20,11 @@ const NavBar: FC<NavBarProps> = ({ className, links }) => {
             selectedKeys={[selectedKey]}
             onClick={onClick}
             className={className}
-            items={links.map(({ path, label, Icon }) => ({ key: path, label, icon: <Icon /> }))}
+            items={links.map(({ path, label, Icon }) => ({
+                key: path,
+                label,
+                icon: <Icon style={{ fontSize: 20 }} />,
+            }))}
         />
     );
 };
