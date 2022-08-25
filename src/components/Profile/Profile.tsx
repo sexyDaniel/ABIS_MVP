@@ -45,7 +45,7 @@ const Profile: FC = () => {
                 onConfirm={onDelete}
                 okButtonProps={{ loading: deleteIsLoading }}
                 onCancel={handleCancel}>
-                <Button loading={deleteIsLoading} className={styles.btn} danger onClick={showPopconfirm}>
+                <Button className={styles.btn} danger onClick={showPopconfirm}>
                     Удалить профиль
                 </Button>
             </Popconfirm>

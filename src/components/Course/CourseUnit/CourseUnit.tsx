@@ -10,8 +10,8 @@ import styles from './CourseUnit.module.scss';
 
 type CourseUnitProps = {
     unit: UnitStructure;
-    onNext?: () => void;
-    canNext?: boolean;
+    onNext: (saveProgress: boolean) => void;
+    canNext: boolean;
 };
 
 const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
@@ -75,6 +75,9 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
         setFinished(false);
     };
 
+    const nextWithSaveProgress = () => onNext(true);
+    const nextWithoutSaveProgress = () => onNext(false);
+
     useEffect(() => {
         if (testItems) setCurrentTestItemIndex(0);
     }, [testItems]);
@@ -83,7 +86,7 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
         return (
             <Space direction='vertical' size={20}>
                 <Markdown children={theoryUnit.body} />
-                {canNext && <Button onClick={onNext}>Далее</Button>}
+                {canNext && <Button onClick={nextWithSaveProgress}>Далее</Button>}
             </Space>
         );
 
@@ -99,7 +102,7 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
                     extra={
                         canNext
                             ? [
-                                  <Button type='primary' onClick={onNext}>
+                                  <Button key='next' type='primary' onClick={nextWithSaveProgress}>
                                       Далее
                                   </Button>,
                               ]
@@ -113,11 +116,22 @@ const CourseUnit: FC<CourseUnitProps> = ({ unit, onNext, canNext }) => {
                 status='error'
                 title='Тест не пройден'
                 subTitle={`Вы ответили правильно на ${statistic.correctAnswerCount} из ${statistic.questionCount} вопросов`}
-                extra={[
-                    <Button type='primary' onClick={resetTest}>
-                        Попробовать снова
-                    </Button>,
-                ]}
+                extra={
+                    canNext
+                        ? [
+                              <Button key='tryAgain' type='primary' onClick={resetTest}>
+                                  Попробовать снова
+                              </Button>,
+                              <Button key='next' type='primary' onClick={nextWithoutSaveProgress}>
+                                  Далее
+                              </Button>,
+                          ]
+                        : [
+                              <Button key='tryAgain' type='primary' onClick={resetTest}>
+                                  Попробовать снова
+                              </Button>,
+                          ]
+                }
             />
         );
     }

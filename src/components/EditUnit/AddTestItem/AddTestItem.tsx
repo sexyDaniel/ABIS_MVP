@@ -6,6 +6,7 @@ import { TestItemType } from '../../../types/AdminTestItem';
 import { courseApi } from '../../../services/courseService';
 
 import styles from '../EditUnit.module.scss';
+import Markdown from '../../Markdown/Markdown';
 
 type AddTestItemProps = {
     className?: string;
@@ -15,6 +16,9 @@ type AddTestItemProps = {
 const AddTestItem: FC<AddTestItemProps> = ({ testUnitId }) => {
     const [type, setType] = useState<TestItemType>('OneAnswer');
     const onTypeChange = (e: RadioChangeEvent) => setType(e.target.value);
+
+    const [markdownShow, setMarkdownShow] = useState(false);
+    const toggleMarkdown = () => setMarkdownShow((prev) => !prev);
 
     const [questionText, setQuestionText] = useState('');
     const onTextChange = (e: any) => setQuestionText(e.target.value);
@@ -66,7 +70,9 @@ const AddTestItem: FC<AddTestItemProps> = ({ testUnitId }) => {
         <div>
             <Space direction='vertical' size={20} className={styles.input}>
                 <Typography>Текст вопроса:</Typography>
-                <TextArea autoSize value={questionText} onChange={onTextChange} />
+                <Button onClick={toggleMarkdown}>Посмотреть текст вопроса</Button>
+                {!markdownShow && <TextArea autoSize value={questionText} onChange={onTextChange} />}
+                {markdownShow && <Markdown children={questionText} />}
             </Space>
             <Space size={20} className={styles.space}>
                 <Typography>Тип:</Typography>

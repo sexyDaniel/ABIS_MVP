@@ -1,10 +1,10 @@
-import { Button, List, message, Space, Spin, Typography } from 'antd';
+import { Button, List, message, Popconfirm, Space, Spin, Typography } from 'antd';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { courseApi } from '../../services/courseService';
 import { EDIT_COURSE_ROUTE } from '../../routes';
 import { useNavigate } from 'react-router-dom';
 import { Course } from '../../types/Course';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
 import styles from './AdminCourse.module.scss';
 
@@ -40,6 +40,10 @@ const AdminCourse: FC<{ course: Course }> = ({ course }) => {
     const [changeStatus, { isLoading: changeStatusIsLoading }] = courseApi.useChangeStatusCourseMutation();
     const [deleteCourse, { isLoading: deleteIsLoading }] = courseApi.useDeleteCourseMutation();
 
+    const [visible, setVisible] = useState(false);
+    const showPopconfirm = () => setVisible(true);
+    const handleCancel = () => setVisible(false);
+
     const onChangeStatusClick = () =>
         changeStatus(course.id!)
             .unwrap()
@@ -67,9 +71,19 @@ const AdminCourse: FC<{ course: Course }> = ({ course }) => {
                 <Button onClick={onEditClick}>
                     <EditOutlined />
                 </Button>
-                <Button onClick={onDeleteClick} loading={deleteIsLoading}>
-                    <DeleteOutlined />
-                </Button>
+                <Popconfirm
+                    title='Вы точно хотите удалить профиль?'
+                    visible={visible}
+                    okText='Да'
+                    cancelText='Нет'
+                    placement='topRight'
+                    onConfirm={onDeleteClick}
+                    okButtonProps={{ loading: deleteIsLoading }}
+                    onCancel={handleCancel}>
+                    <Button onClick={showPopconfirm}>
+                        <DeleteOutlined />
+                    </Button>
+                </Popconfirm>
             </div>
         </>
     );

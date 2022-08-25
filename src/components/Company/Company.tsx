@@ -1,10 +1,10 @@
+import { Button, List, message, Popconfirm, Spin, Typography } from 'antd';
 import EditCompanyButton from './EditCompanyButton/EditCompanyButton';
 import AddCompanyButton from './AddCompanyButton/AddCompanyButton';
-import { Button, List, message, Spin, Typography } from 'antd';
+import { Company as CompanyType } from '../../types/Company';
 import { companyApi } from '../../services/companyService';
 import { DeleteOutlined } from '@ant-design/icons';
-import { Company as CompanyType } from '../../types/Company';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 
 import styles from './Company.module.scss';
 
@@ -36,6 +36,9 @@ const Company: FC = () => {
 
 const CompanyItem: FC<{ company: CompanyType }> = ({ company }) => {
     const [deleteCompany, { isLoading: deleteIsLoading }] = companyApi.useDeleteCompanyMutation();
+    const [visible, setVisible] = useState(false);
+    const showPopconfirm = () => setVisible(true);
+    const handleCancel = () => setVisible(false);
 
     const onDelete = () =>
         deleteCompany(company.id!)
@@ -49,9 +52,19 @@ const CompanyItem: FC<{ company: CompanyType }> = ({ company }) => {
             </Typography>
             <div>
                 <EditCompanyButton company={company} />
-                <Button loading={deleteIsLoading} onClick={onDelete}>
-                    <DeleteOutlined />
-                </Button>
+                <Popconfirm
+                    title='Вы точно хотите удалить профиль?'
+                    visible={visible}
+                    okText='Да'
+                    cancelText='Нет'
+                    placement='topRight'
+                    onConfirm={onDelete}
+                    okButtonProps={{ loading: deleteIsLoading }}
+                    onCancel={handleCancel}>
+                    <Button onClick={showPopconfirm}>
+                        <DeleteOutlined />
+                    </Button>
+                </Popconfirm>
             </div>
         </>
     );

@@ -31,16 +31,17 @@ const Course: FC = () => {
     const backToDescription = () => setCurrentSubItemIndex(null);
 
     useEffect(toFirstUnit, []);
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [currentSubItemIndex, currentUnitIndex]);
 
     const onUnitClick = (index: number) => () => {
         setcurrentUnitIndex(index);
         setVisible(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     const onSubItemClick = (index: number) => () => {
         setCurrentSubItemIndex(index);
         setVisible(false);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const onAddClick = () =>
@@ -51,10 +52,10 @@ const Course: FC = () => {
                 (err) => message.error(err.data?.message ?? 'Произошла ошибка')
             );
 
-    const onNext = () => {
+    const onNext = (saveProgress = true) => {
         if (course && currentSubItemIndex !== null && currentUnitIndex !== null) {
             const currentUnit = course.subItems[currentSubItemIndex].units[currentUnitIndex];
-            if (!currentUnit.isComplete) {
+            if (saveProgress && !currentUnit.isComplete) {
                 message.loading({ content: 'Сохранение', key: currentUnit.id });
                 setProgress({ courseId: course.courseId, unitId: currentUnit.id })
                     .unwrap()
@@ -83,7 +84,7 @@ const Course: FC = () => {
 
     const canStartSubItem = !!(currentSubItem?.units.length !== 0);
     const canNextSubItem = !(course && currentSubItemIndex === course.subItems.length - 1);
-    const canNextUnit = !(currentSubItem && currentUnitIndex === currentSubItem.units.length - 1);
+    const canNextUnit = !(!canNextSubItem && currentSubItem && currentUnitIndex === currentSubItem.units.length - 1);
 
     const onStartSubItem = () => {
         if (canStartSubItem) setcurrentUnitIndex(0);
@@ -116,7 +117,7 @@ const Course: FC = () => {
                     </Button>
                     <Typography.Title>{currentSubItem.title}</Typography.Title>
                     <Markdown children={currentSubItem.description!} />
-                    {canNextSubItem && (
+                    {(canNextSubItem || canStartSubItem) && (
                         <Button type='primary' loading={addIsLoading} onClick={onStartSubItem} className={styles.btn}>
                             {canStartSubItem ? 'Начать' : 'Далее'}
                         </Button>

@@ -1,7 +1,7 @@
 import { Role } from '../types/Role';
 import { commonApi } from './commonService';
 
-export const usersApi = commonApi.enhanceEndpoints({ addTagTypes: ['Users'] }).injectEndpoints({
+export const usersApi = commonApi.enhanceEndpoints({ addTagTypes: ['Users', 'AdminStatistic'] }).injectEndpoints({
     endpoints: (builder) => ({
         addUser: builder.mutation<
             void,
@@ -17,7 +17,7 @@ export const usersApi = commonApi.enhanceEndpoints({ addTagTypes: ['Users'] }).i
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Users'],
+            invalidatesTags: ['Users', 'AdminStatistic'],
         }),
         addUsers: builder.mutation<
             void,
@@ -32,7 +32,7 @@ export const usersApi = commonApi.enhanceEndpoints({ addTagTypes: ['Users'] }).i
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Users'],
+            invalidatesTags: ['Users', 'AdminStatistic'],
         }),
     }),
 });
